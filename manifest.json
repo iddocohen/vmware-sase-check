@@ -16,7 +16,9 @@
   },
   
   "permissions": [
-    "proxy"
+    "proxy",
+    "https://safe-cws-sase.vmware.com/*",
+    "*://www.vmware.com/*"
   ],
   "background": {
         "scripts": ["js/vmchecker.background.js"]
