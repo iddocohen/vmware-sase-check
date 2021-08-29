@@ -1,59 +1,110 @@
 var log = console.log.bind(console);
+var error = console.error.bind(console);
 
-function getUrl (url) {
-    return $.ajax({ 
-            type:"GET",
-            url:url,
-            cache: false,
-            async: false,
-            dataType: 'html'
-     });
+
+// Basic Timer Class
+function Timer () {
+    this._start = new Date();
+
+    this.elapsed = function() {
+        return (new Date()) - this._start;
+    }
+
+    this.reset = function () {
+        this._start = new Date();
+    }
 }
 
-var check = [
-    "https://safe-cws-sase.vmware.com/code.vmware.com/home", 
-    "https://safe-cws-sase.vmware.com/sase.vmware.com"
-];
 
-function checkCWS() {
-    $('.text').text('Testing connection towards VMware Cloud Web Security (CWS) . . .');
-    var xhr = new XMLHttpRequest();
-    $.ajax({
-            type:"GET",
-            url:"https://safe-cws-sase.vmware.com/",
-            // Will add timestamps behind the URL to ensure cache is not hitting. 
+async function doAjax(url) {
+    let ret = [];
+    let time;
+    try {
+        // Putting everything in separte XHR to get a bit more information
+        var xhr = new XMLHttpRequest();
+        await $.ajax({
+            type: "GET",
+            beforeSend: function() {
+                time = new Timer();
+            },
+            url: url,
             cache: false,
-            // Putting everything in separte XHR to get a bit more information
+            dataType: "html",
             xhr: function() {
                 return xhr;
             },
-            dataType: 'html'
-     }).always(function(result){ 
-        let t = "Plugin is not working as it should. Please raise a issue under GitHub repository.";
-        if (xhr) {
-            // We should get vmware.com or cws site. If not behind CWS, will get redirected to vmware.com and if we are behind it we will reach it directly.
-            if (xhr.status == 200) {
-                if (xhr.responseURL.includes('www.vmware.com')) { // If we get vmware.com then we got redirected, as we are not behind CWS.
-                    t = "The response received indicates you are not behind VMware CWS service";
-                } else if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
-                    $.when(getUrl(check[0]), getUrl(check[1])).done(function(ret1, ret2) { // We checking other vmware websites but behind cws.
-                        //TODO: Check if they get blocked by rule, then they are also valid.
-                        if (ret1[1] == "success" && ret2[2] == "success"){
-                            t = "You are behind VMware CWS but code.vmware.com and sase.vmware.com was not reachable behind CWS.";
-                        } else {
-                            t = "You are behind VMware CWS and everything works.";
-                        }
-                    });
-                } else { // If neither of the above has happenend, then something has changed the responsURL before reaching the extension.
-                    t = "CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment";
-                }
-            } else {
-                t = "CWS is not reachable. Please try again later."
-            }
-        }
-        $('.text').text(t);
-    });
+            success: function(data,status,jqXHR) {
+                ret.push(jqXHR);
+                ret.push(xhr);
+            },
+            error: function(jqXHR) {
+                ret.push(jqXHR);
+                ret.push(xhr);
+            },
+            timeout: 3000
+        });
+    } catch (e) {
+       //error(e)
+    }
+    ret.push(time.elapsed());
+    return ret;
 }
+
+async function checkCWS(dom=".text") {
+    function text(t) {
+        $(dom).text(t);
+    }
+    text("Testing connection towards VMware Cloud Web Security (CWS) . . .");
+
+    let cws_url = "https://safe-cws-sase.vmware.com/";
+    let proxy_url = "https://safe-cws-sase.vmware.com/safeview-auth-server/proxy_auth?url=%BASE64%&pnr=2"
+    let top10_domains = [
+        "google.com",
+        "youtube.com",
+        "facebook.com",
+        "twitter.com",
+        "instagram.com",
+        "stackoverflow.com",
+        "wikipedia.org",
+        "live.com",
+        "yahoo.com",
+        "amazon.com"
+    ];
+    let [jqXHR, xhr, rtt] = await doAjax(cws_url);
+
+    if (xhr.status != 200 && xhr.status != 403) {
+        text(xhr);
+        return 0;
+    }
+
+    if (xhr.status == 200) {
+        if (xhr.responseURL.includes('www.vmware.com')) { // If we get vmware.com then we got redirected, as we are not behind CWS.
+            text("The response received indicates you are not behind VMware CWS service");
+        } else if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
+            let deferreds = [];
+            for (let i = 0; i < top10_domains.length; i++) {
+                let base64str = btoa("https://"+top10_domains[i]);
+                let new_proxy_url = proxy_url.replace(/%BASE64%/g, base64str);
+                deferreds.push(doAjax(new_proxy_url));
+            }
+            $.when.apply($, deferreds).done(function(){
+                for (let i = 0; i < arguments.length; i++){
+                    let [res_jqXHR, res_xhr, res_rtt] = arguments[i];
+                    if (res_xhr.status == 200 || res_xhr.status == 403) {
+                        let res_url = new URL(res_xhr.responseURL);
+                        let cws_only_rtt = res_rtt - rtt;
+                        log(res_url.origin+" " + res_rtt + " "+ rtt + " " +cws_only_rtt);
+                    }
+                } 
+            });
+        } else {
+            text("CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment");
+        }
+    } else {
+        text("CWS is not reachable. Please try again later.");
+    }   
+}    
+
 
 $(function () {
     $('.btn').click(function() {

@@ -18,7 +18,17 @@
   "permissions": [
     "proxy",
     "https://safe-cws-sase.vmware.com/*",
-    "*://www.vmware.com/*"
+    "*://www.vmware.com/*",
+    "https://*.google.com/*",
+    "https://*.youtube.com/*",
+    "https://*.facebook.com/*",
+    "https://*.twitter.com/*",
+    "https://*.instagram.com/*",
+    "https://*.stackoverflow.com/*",
+    "https://*.wikipedia.org/*",
+    "https://*.live.com/*",
+    "https://*.yahoo.com/*",
+    "https://*.amazon.com/*"
   ],
   "background": {
         "scripts": ["js/vmchecker.background.js"]
