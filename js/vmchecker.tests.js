@@ -27,7 +27,6 @@ function Timer () {
 // Basic Stats Class with sum, mean, std, median, 25% precentitle and 75% precentitle
 //TODO: Make it better... create and then delete, really?!
 function Stats (oarr) {
-
     let arr = [...oarr];
     this._asc = arr.sort((a,b) => a-b);
 
@@ -52,19 +51,18 @@ function Stats (oarr) {
         }
     }
 
-    this.sum = round(this._sum(), 2);
-    this.mean = round(this.sum / arr.length, 2);
-    this.std = round(this._std(), 2);
-    this.q75 = round(this._quantitle(.75), 2);
+    this.sum    = round(this._sum(), 2);
+    this.mean   = round(this.sum / arr.length, 2);
+    this.std    = round(this._std(), 2);
+    this.q75    = round(this._quantitle(.75), 2);
     this.median = round(this._quantitle(.50), 2);
-    this.q25 = round(this._quantitle(.25), 2);
+    this.q25    = round(this._quantitle(.25), 2);
 
     delete this._asc;
     delete this._sum;
     delete this._std;
     delete this._quantitle;
     delete this.sum;
-
 }
 
 
@@ -104,6 +102,7 @@ async function doAjax(url, type="html") {
     }
     return ret;
 }
+
 function ValidateIPaddress(ipaddress) {  
     if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {  
         return true  
@@ -133,7 +132,7 @@ function ipInRange(cidr,ip) {
    return false;
 }
 
-async function checkCWS(dom=".text") {
+async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     let cws_url = "https://safe-cws-sase.vmware.com/";
     let top10_domains = [
         "google.com",
@@ -155,8 +154,8 @@ async function checkCWS(dom=".text") {
         "207.66.112.0/21"
     ];
 
-    function text(t, d=dom) {
-        $(dom).text(t);
+    function text(t, d=dom_process) {
+        $(d).text(t);
     }
 
     async function testSourceIP () {
@@ -165,8 +164,7 @@ async function checkCWS(dom=".text") {
             if (ValidateIPaddress(ipify[1].responseText)) {
                  for (let i = 0; i < sase_ip_ranges.length; i++) {
                     if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
-                        log(ipify[1].responseText);
-                        return true;
+                        return ipify[1].responseText;
                     }
                  }
             }
@@ -174,7 +172,7 @@ async function checkCWS(dom=".text") {
         return false;
     }
 
-    text("Testing connection towards VMware Cloud Web Security (CWS) . . .");
+    text("Testing connection towards VMware CWS . . .");
 
     let behindCWS = await testSourceIP();
 
@@ -188,7 +186,7 @@ async function checkCWS(dom=".text") {
         if (xhr.responseURL.includes('www.vmware.com')) { // If we get vmware.com then we got redirected, as we are not behind CWS.
             if (!behindCWS) {
                 text("The response received indicates you are not behind VMware CWS service");
-            }else {
+            } else {
                 text("You are behind CWS but you got redirect back to VMware.com. Something is very wrong."); 
             }
         } else if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
@@ -197,18 +195,6 @@ async function checkCWS(dom=".text") {
                 let new_proxy_url = "https://"+top10_domains[i];
                 deferreds.push(doAjax(new_proxy_url));
             }
-            /* TODO: Explore if I should do this this way. I do not think iti will bring a benefit
-            var deferred = $.Deferred();
-            $.when.apply($, deferreds)
-		        .done(function () { deferred.resolve(deferreds); })
-		        .fail(function () { deferred.reject(deferreds); });
-
-            deferred.promise().done(function(x) {
-                for (let i = 0; i < x.length; i++) {
-                    log(x[i].then());
-                }
-            });
-            */
             $.when.apply($, deferreds).done(function(){
                 let rtt_arr = [];
                 for (let i = 0; i < arguments.length; i++){
@@ -219,12 +205,12 @@ async function checkCWS(dom=".text") {
                     }
                 }
                 let stats = new Stats(rtt_arr);
-                let str = "";
-                for (const [k, v] of Object.entries(stats)) {
-                        str += k+" = "+v+"s ";
-                }
-                text(`Performance of reaching Top 10 Websites behind CWS: ${str}`);
+                text(`${stats.mean}s`, dom_mean);
+                text(`${stats.std}s`, dom_std);
+                text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
+                text(`You are behind VMware CWS and your IP is ${behindCWS}`);
             });
+            
         } else {
             text("CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment.");
         }
@@ -235,10 +221,148 @@ async function checkCWS(dom=".text") {
     }   
 }    
 
+async function block_website(site) {
+    let [jqXHR, xhr, rtt, data] = await doAjax(site); 
 
-$(function () {
-    $('.btn').click(function() {
-        checkCWS();    
+    let ret = [];
+    if (xhr.status == 403) {
+        ret.push(true);
+    } else if (xhr.status == 200) {
+        ret.push(false);
+    } else {
+        ret.push(undefined);
+    }
+
+    ret.push(rtt);
+
+    return ret;
+}
+
+config = [
+     { 
+       title: "Block proxy avoidance and anonymizers websites",
+       desc : "This test tries to connect to an anonymizing website. Failing this test means you have not configured block 'Proxy Avoidance and Anonymous' under 'Web Category'.",
+       id: "block_proxy",
+       category: "website",
+       website: "https://www.proxysite.com/assets/images/logo.png"
+     },
+     { 
+       title: "Block access to adult and pornography content",
+       desc: "This test attempts to visit a known adult website and download a icon. Failing this test means you have not configured block 'Adult and Pornography' under 'Web Category'.",
+       id: "block_adult",
+       category: "website",
+       website: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico"
+     },
+     {
+        title: "Block access to known phishing content",
+        desc: "This test attempts to download icon from a known phishing website.",
+        id: "block_phising",
+        category: "website",
+        website: "https://mtron.in/images/favicon.ico"
+     },
+     {
+        title: "Block malware over HTTPs",
+        desc: "This test attempts to download malware over HTTPs",
+        id: "block_https_malware",
+        category: "website",
+        website: "https://secure.eicar.org/eicar.com.txt"
+     },
+     {
+        title: "Block malware over HTTP",
+        desc: "This test attempts to download malware over HTTP",
+        id: "block_http_malware",
+        category: "website",
+        website: "http://www.rexswain.com/eicar2.zip"
+     },
+     {
+        title: "Block malware download from cloud app",
+        desc: "This test attempts to download a malware from popular cloud applications",
+        id: "block_cloud_malware",
+        category: "website",
+        website: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip"
+     },
+     {
+        title: "Block file-based exploit",
+        desc: "Checks whether you are protected from known file-based exploits.",
+        id: "block_file_exploits",
+        category: "website",
+        website: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf"
+     },
+
+];
+
+function lookup(id) {
+    for (let i = 0; i < config.length; i++) {
+        let o = config[i];
+        if (o.id == id) {
+            return o.website;            
+        }   
+    }
+    return false;
+}
+
+function progress(sum, count){
+    let num = round((count / sum) * 100);
+    log(num);
+    $(".progress-bar").css("width", num+"%");
+    $(".progress-bar").attr("aria-valuenow", num);
+    $(".progress-bar").text(num+"%");
+}
+
+$(window).bind("load", function () {
+    for (let i = 0; i < config.length; i++){
+        let o = config[i];
+        let div = `
+          <div class="col">
+            <div class="card">
+              <h5 class="card-header">${o.title}</h5>
+              <div class="card-body">
+                <p class="card-text">${o.desc}</p>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button class="btn btn-outline-primary me-md-2" data-category="${o.category}" type="button" id="${o.id}">Run</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        $("#checks_content").append(div);
+    }
+    $('.btn').on("click", function() {
+        let id = $(this).attr('id');
+        let category = $(this).attr('data-category');
+        switch (category) {
+            case "cws": 
+                checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
+                break;
+            case "website":
+                let website = lookup(id);
+                let func = block_website(website);
+                if (typeof func === "object") {
+                    Promise.resolve(func).then(function(value) {
+                        let [bool, rtt] = value;
+                        button = $("#"+id);
+                        if (bool == true) {
+                            $(button).removeClass("btn-outline-primary");
+                            $(button).removeClass("btn-outline-danger");
+                            $(button).addClass("btn-outline-success");
+                            $(button).text('Blocked');
+                            progress(config.length-1, $(".btn-outline-success").length);
+                        } else if (bool == false) {
+                            $(button).removeClass("btn-outline-primary");
+                            $(button).removeClass("btn-outline-success");
+                            $(button).addClass("btn-outline-danger");
+                            $(button).text('Unblocked');
+                        }else{
+                            $(button).removeClass("btn-outline-primary");
+                            $(button).removeClass("btn-outline-success");
+                            $(button).addClass("btn-outline-danger");
+                            $(button).text('Error');
+                        }
+                    });
+                }
+                break;
+        }
     });
+    $('#cws_check').click();
 });
 
