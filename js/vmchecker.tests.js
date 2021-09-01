@@ -226,15 +226,26 @@ async function block_website(site) {
 
     let ret = [];
     if (xhr.status == 403) {
+        let classified = "";
+        let forbidden = "";
+        try {
+            forbidden = $.parseHTML(jqXHR.responseText);
+            classified = $(forbidden).find("strong").text();
+            if (classified != ""){
+                ret.push(classified);
+            }
+        } catch (e) {
+            log (e);
+        } 
         ret.push(true);
     } else if (xhr.status == 200) {
+        ret.push("");
         ret.push(false);
     } else {
+        ret.push("");
         ret.push(undefined);
     }
-
     ret.push(rtt);
-
     return ret;
 }
 
@@ -303,7 +314,6 @@ function lookup(id) {
 
 function progress(sum, count){
     let num = round((count / sum) * 100);
-    log(num);
     $(".progress-bar").css("width", num+"%");
     $(".progress-bar").attr("aria-valuenow", num);
     $(".progress-bar").text(num+"%");
@@ -319,17 +329,54 @@ $(window).bind("load", function () {
               <div class="card-body">
                 <p class="card-text">${o.desc}</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                    <button class="btn btn-outline-primary me-md-2" data-category="${o.category}" type="button" id="${o.id}">Run</button>
+                    <button class="btn btn-outline-primary" data-tested="no" data-type="test" data-category="${o.category}" type="button" id="${o.id}">Test</button><br>
                 </div>
+              </div>
+              <div class="card-footer">
+                  <p class="card-text text-muted right10"><br></p>
               </div>
             </div>
           </div>
         `;
         $("#checks_content").append(div);
     }
+    $('.btn').mouseover(function() {
+        let attr = $(this).attr('data-tested');
+        if (attr == 'blocked'){
+            $(this).removeClass("btn-outline-success");
+            $(this).addClass("btn-outline-primary");
+            $(this).text("Re-run Test");
+        } else if (attr == 'unblocked' || attr == 'error') {
+            $(this).removeClass("btn-outline-danger");
+            $(this).addClass("btn-outline-primary");
+            $(this).text("Re-run Test");
+        }
+    })
+    $('.btn').mouseleave(function() {
+        let attr = $(this).attr('data-tested');
+        if (attr == 'blocked'){
+            $(this).addClass("btn-outline-success");
+            $(this).removeClass("btn-outline-primary");
+            $(this).text("Blocked");
+        } else if (attr == 'unblocked' || attr == 'error') {
+            $(this).addClass("btn-outline-danger");
+            $(this).removeClass("btn-outline-primary");
+            if ( attr == 'unblocked') {
+                $(this).text("Unblocked");
+            }else {
+                $(this).text("Error");
+            }
+        }
+    });
     $('.btn').on("click", function() {
         let id = $(this).attr('id');
         let category = $(this).attr('data-category');
+
+        if (id == "test_all") {
+            $('button[data-type="test"]').click();
+            return true;
+        }
+         
         switch (category) {
             case "cws": 
                 checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
@@ -339,25 +386,29 @@ $(window).bind("load", function () {
                 let func = block_website(website);
                 if (typeof func === "object") {
                     Promise.resolve(func).then(function(value) {
-                        let [bool, rtt] = value;
+                        let [data, bool, rtt] = value;
                         button = $("#"+id);
                         if (bool == true) {
                             $(button).removeClass("btn-outline-primary");
                             $(button).removeClass("btn-outline-danger");
                             $(button).addClass("btn-outline-success");
+                            $(button).attr("data-tested","blocked");
                             $(button).text('Blocked');
-                            progress(config.length-1, $(".btn-outline-success").length);
-                        } else if (bool == false) {
-                            $(button).removeClass("btn-outline-primary");
-                            $(button).removeClass("btn-outline-success");
-                            $(button).addClass("btn-outline-danger");
-                            $(button).text('Unblocked');
+                            $(button).parent().parent().parent().find("p.text-muted").text("Category identified by CWS as '"+data+"'. Response time was "+rtt+"s");
                         }else{
                             $(button).removeClass("btn-outline-primary");
                             $(button).removeClass("btn-outline-success");
                             $(button).addClass("btn-outline-danger");
+                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
+                        }
+                        if (bool == false) {
+                            $(button).attr("data-tested","unblocked");
+                            $(button).text('Unblocked');
+                        }else if (bool == undefined){
+                            $(button).attr("data-tested","error");
                             $(button).text('Error');
                         }
+                        progress(config.length-1, $(".btn-outline-success").length);
                     });
                 }
                 break;
