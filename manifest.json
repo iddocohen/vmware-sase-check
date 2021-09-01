@@ -4,6 +4,7 @@
   "name": "VMware SASE Browser Checker",
   "description": "Checking browser setting to determine if browser can reach Cloud Web Security (CWS) functionalities",
   "version": "0.1",
+  "author": "Iddo Cohen",
 
   "icons": { 
         "16": "icon/icon16-white.png",
@@ -14,12 +15,12 @@
     "default_icon": "icon/icon16-white.png"
   },
   "permissions": [
-    "background",
     "tabs",
-    "*://*/*"
+    "http://*/*",
+    "https://*/*"
   ],
   "background": {
-        "scripts": ["js/vmchecker.background.js"],
-        "persistent": false
+    "scripts": ["js/vmchecker.background.js"],
+   "persistent": false
   }
 }
