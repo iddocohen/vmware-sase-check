@@ -6,7 +6,10 @@
 
 *VMware CWS Checker is a web browser extension to help check your security with (or even without) VMware CWS service*
 
-### Installation Instructions
+## Releases
+*None yet as in Beta stage* 
+
+## Installation Instructions
 **Google Chrome**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
 2. Unzip the file and you should have a folder named `vmware-sase-check`.
