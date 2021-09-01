@@ -151,6 +151,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         "216.221.24.0/21",
         "64.186.24.0/21",
         "136.144.96.0/19",
+        "159.100.166.0/24",
         "207.66.112.0/21"
     ];
 
@@ -217,7 +218,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.mean}s`, dom_mean);
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
-                let str = `You are behind VMware CWS and your IP is ${behindCWS}`;
+                let str = `You are behind VMware CWS. The IP you are using is ${behindCWS}`;
                 if (geoCity != "") {
                     str += ` in ${geoCity}`;
                 } 
