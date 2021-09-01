@@ -300,13 +300,6 @@ config = [
        website: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico"
      },
      {
-        title: "Block access to known phishing content",
-        desc: "This test attempts to download icon from a known phishing website.",
-        id: "block_phising",
-        category: "website",
-        website: "https://mtron.in/images/favicon.ico"
-     },
-     {
         title: "Block malware over HTTPs",
         desc: "This test attempts to download malware over HTTPs",
         id: "block_https_malware",
