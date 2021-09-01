@@ -151,7 +151,8 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         "216.221.24.0/21",
         "64.186.24.0/21",
         "136.144.96.0/19",
-        "159.100.166.0/24",
+        "159.100.160.0/20",
+        "216.221.24.0/21",
         "207.66.112.0/21"
     ];
 
@@ -167,8 +168,13 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                     if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
                         return ipify[1].responseText;
                     }
-                 }
+                 } 
+                 log ("IP not found in range");
+            } else {
+                log ("IP received by ipify was not valid")
             }
+        } else {
+            log ("Cannot reach ipify to determine IP")
         }
         return "";
     }
@@ -178,7 +184,11 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         if (ipapi[1].status == 200){
             if (ipapi[3].hasOwnProperty("city")) {
                 return ipapi[3].city;            
+            } else {
+                log ("Geo-location service did not give us a city in JSON");
             }
+        } else {
+            log ("Geo-location service not available");
         }
         return "";
     }
@@ -192,8 +202,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         text ("You are behind CWS. Will test further...");
         geoCity   = await getGeoCity(behindCWS);
     } else {
-        text ("The response received indicates you are not behind VMware CWS service");
-        return 0;
+        text ("The response received indicates you are not behind VMware CWS service. Double checking...");
     }
 
     let [jqXHR, xhr, rtt, data] = await doAjax(cws_url);
@@ -218,16 +227,23 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.mean}s`, dom_mean);
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
-                let str = `You are behind VMware CWS. The IP you are using is ${behindCWS}`;
-                if (geoCity != "") {
-                    str += ` in ${geoCity}`;
+                if (behindCWS) {
+                    let str = `You are behind VMware CWS. The IP you are using is ${behindCWS}`;
+                    if (geoCity != "") {
+                        str += ` in ${geoCity}`;
+                    }
+                    str += ".";
+                    text(str);
+                } else {
+                    text ("You are behind VMware CWS but external IP used could not be determined.");
                 } 
-                text(str);
             });
             
         } else {
             text("CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment.");
         }
+    } else if (xhr.status == 404 && behindCWS == "") {
+        text ("After double checking it seems you are not behind CWS.");
     } else if (xhr.status == 403) {
         text("Connection got blocked to CWS. Please check browser PAC/Socket/Proxy settings or firewall settings.");
     } else {
