@@ -169,15 +169,27 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                  }
             }
         }
-        return false;
+        return "";
+    }
+
+    async function getGeoCity (ip) {
+        let ipapi = await doAjax("http://ip-api.com/json/"+ip, "json");
+        if (ipapi[1].status == 200){
+            if (ipapi[3].hasOwnProperty("city")) {
+                return ipapi[3].city;            
+            }
+        }
+        return "";
     }
 
     text("Testing connection towards VMware CWS . . .");
 
     let behindCWS = await testSourceIP();
+    let geoCity = "";
 
-    if (behindCWS) {
+    if (behindCWS != "") {
         text ("You are behind CWS. Will test further...");
+        geoCity   = await getGeoCity(behindCWS);
     } else {
         text ("The response received indicates you are not behind VMware CWS service");
         return 0;
@@ -205,7 +217,11 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.mean}s`, dom_mean);
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
-                text(`You are behind VMware CWS and your IP is ${behindCWS}`);
+                let str = `You are behind VMware CWS and your IP is ${behindCWS}`;
+                if (geoCity != "") {
+                    str += ` in ${geoCity}`;
+                } 
+                text(str);
             });
             
         } else {
