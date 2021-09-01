@@ -133,7 +133,7 @@ function ipInRange(cidr,ip) {
 }
 
 async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
-    let cws_url = "https://safe-cws-sase.vmware.com/";
+    let cws_url = "https://safe-cws-sase.vmware.com/safeview-static/img/input-icons.png";
     let top10_domains = [
         "google.com",
         "youtube.com",
@@ -178,18 +178,15 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
     if (behindCWS) {
         text ("You are behind CWS. Will test further...");
+    } else {
+        text ("The response received indicates you are not behind VMware CWS service");
+        return 0;
     }
 
     let [jqXHR, xhr, rtt, data] = await doAjax(cws_url);
 
     if (xhr.status == 200) {
-        if (xhr.responseURL.includes('www.vmware.com')) { // If we get vmware.com then we got redirected, as we are not behind CWS.
-            if (!behindCWS) {
-                text("The response received indicates you are not behind VMware CWS service");
-            } else {
-                text("You are behind CWS but you got redirect back to VMware.com. Something is very wrong."); 
-            }
-        } else if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
+         if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
             let deferreds = [];
             for (let i = 0; i < top10_domains.length; i++) {
                 let new_proxy_url = "https://"+top10_domains[i];
@@ -223,26 +220,24 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
 async function block_website(site) {
     let [jqXHR, xhr, rtt, data] = await doAjax(site); 
-
     let ret = [];
+    let classified = "";
     if (xhr.status == 403) {
-        let classified = "";
-        let forbidden = "";
         try {
-            forbidden = $.parseHTML(jqXHR.responseText);
-            classified = $(forbidden).find("strong").text();
-            if (classified != ""){
-                ret.push(classified);
+            if (jqXHR.responseText.includes("VMware Cloud Web Security")) {
+                let forbidden = $.parseHTML(jqXHR.responseText);
+                classified = $(forbidden).find("strong").text();
             }
         } catch (e) {
             log (e);
         } 
+        ret.push(classified);
         ret.push(true);
     } else if (xhr.status == 200) {
-        ret.push("");
+        ret.push(classified);
         ret.push(false);
     } else {
-        ret.push("");
+        ret.push(classified);
         ret.push(undefined);
     }
     ret.push(rtt);
@@ -252,10 +247,17 @@ async function block_website(site) {
 config = [
      { 
        title: "Block proxy avoidance and anonymizers websites",
-       desc : "This test tries to connect to an anonymizing website. Failing this test means you have not configured block 'Proxy Avoidance and Anonymous' under 'Web Category'.",
+       desc : "This test tries to connect to an proxy websites. Failing this test means you have not configured block 'Proxy Avoidance and Anonymous' under 'Web Category'.",
        id: "block_proxy",
        category: "website",
        website: "https://www.proxysite.com/assets/images/logo.png"
+     },
+     { 
+       title: "Block gambling content",
+       desc : "This test tries to connect to gambling website. Failing this test means you have not configured block 'Gambling' under 'Web Category'.",
+       id: "block_gambling",
+       category: "website",
+       website: "https://www.bet365.com/sports-assets/sports/FooterModule/assets/bet365-logo.svg"
      },
      { 
        title: "Block access to adult and pornography content",
@@ -325,7 +327,10 @@ $(window).bind("load", function () {
         let div = `
           <div class="col">
             <div class="card">
-              <h5 class="card-header">${o.title}</h5>
+              <div class="card-header">
+                <div class="help-tip"></div>
+                <h5>${o.title}</h5>
+              </div>
               <div class="card-body">
                 <p class="card-text">${o.desc}</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
@@ -408,7 +413,7 @@ $(window).bind("load", function () {
                             $(button).attr("data-tested","error");
                             $(button).text('Error');
                         }
-                        progress(config.length-1, $(".btn-outline-success").length);
+                        progress(config.length, $(".btn-outline-success").length);
                     });
                 }
                 break;
