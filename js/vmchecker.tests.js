@@ -311,7 +311,7 @@ config = [
         desc: "This test attempts to download malware over HTTPs",
         id: "block_https_malware",
         category: "website",
-        website: "https://secure.eicar.org/eicar.com.txt"
+        website: "https://secure.eicar.org/eicar.com"
      },
      {
         title: "Block malware over HTTP",
