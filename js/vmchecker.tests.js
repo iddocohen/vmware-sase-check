@@ -1,3 +1,5 @@
+import {config, top10_domains, sase_ip_ranges} from './vmchecker.config.js';
+
 var log = console.log.bind(console);
 var error = console.error.bind(console);
 
@@ -80,7 +82,7 @@ async function doAjax(url, type="html") {
             url: url,
             cache: false,
             dataType: type,
-            xhr: function() {
+            xhr: function () {
                 return xhr;
             },
             success: function(data,status,jqXHR) {
@@ -134,28 +136,6 @@ function ipInRange(cidr,ip) {
 
 async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     let cws_url = "https://safe-cws-sase.vmware.com/safeview-static/img/input-icons.png";
-    let top10_domains = [
-        "google.com",
-        "youtube.com",
-        "facebook.com",
-        "twitter.com",
-        "instagram.com",
-        "stackoverflow.com",
-        "wikipedia.org",
-        "outlook.live.com",
-        "github.com",
-        "amazon.com"
-    ];
-
-    let sase_ip_ranges = [
-        "216.221.24.0/21",
-        "64.186.24.0/21",
-        "136.144.96.0/19",
-        "159.100.160.0/20",
-        "216.221.24.0/21",
-        "207.66.112.0/21"
-    ];
-
     function text(t, d=dom_process) {
         $(d).text(t);
     }
@@ -238,16 +218,15 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                     text ("You are behind VMware CWS but external IP used could not be determined.");
                 } 
             });
-            
         } else {
             text("CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment.");
         }
     } else if (xhr.status == 404 && behindCWS == "") {
         text ("After double checking it seems you are not behind CWS.");
     } else if (xhr.status == 403) {
-        text("Connection got blocked to CWS. Please check browser PAC/Socket/Proxy settings or firewall settings.");
+        text("Connection got blocked to CWS. Please check browser PAC, socket, proxy settings or even firewall settings.");
     } else {
-        text("CWS is not reachable. Please try again later.");
+        text(`CWS is not reachable (${xhr.status}). Please try again later.`);
     }   
 }    
 
@@ -277,58 +256,6 @@ async function block_website(site) {
     return ret;
 }
 
-config = [
-     { 
-       title: "Block proxy avoidance and anonymizers websites",
-       desc : "This test tries to connect to an proxy websites. Failing this test means you have not configured block 'Proxy Avoidance and Anonymous' under 'Web Category'.",
-       id: "block_proxy",
-       category: "website",
-       website: "https://www.proxysite.com/assets/images/logo.png"
-     },
-     { 
-       title: "Block gambling content",
-       desc : "This test tries to connect to gambling website. Failing this test means you have not configured block 'Gambling' under 'Web Category'.",
-       id: "block_gambling",
-       category: "website",
-       website: "https://www.bet365.com/sports-assets/sports/FooterModule/assets/bet365-logo.svg"
-     },
-     { 
-       title: "Block access to adult and pornography content",
-       desc: "This test attempts to visit a known adult website and download a icon. Failing this test means you have not configured block 'Adult and Pornography' under 'Web Category'.",
-       id: "block_adult",
-       category: "website",
-       website: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico"
-     },
-     {
-        title: "Block malware over HTTPs",
-        desc: "This test attempts to download malware over HTTPs",
-        id: "block_https_malware",
-        category: "website",
-        website: "https://secure.eicar.org/eicar.com"
-     },
-     {
-        title: "Block malware over HTTP",
-        desc: "This test attempts to download malware over HTTP",
-        id: "block_http_malware",
-        category: "website",
-        website: "http://www.rexswain.com/eicar2.zip"
-     },
-     {
-        title: "Block malware download from cloud app",
-        desc: "This test attempts to download a malware from popular cloud applications",
-        id: "block_cloud_malware",
-        category: "website",
-        website: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip"
-     },
-     {
-        title: "Block file-based exploit",
-        desc: "Checks whether you are protected from known file-based exploits.",
-        id: "block_file_exploits",
-        category: "website",
-        website: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf"
-     },
-
-];
 
 function lookup(id) {
     for (let i = 0; i < config.length; i++) {
@@ -354,7 +281,6 @@ $(window).bind("load", function () {
           <div class="col">
             <div class="card">
               <div class="card-header">
-                <div class="help-tip"></div>
                 <h5>${o.title}</h5>
               </div>
               <div class="card-body">
@@ -418,7 +344,7 @@ $(window).bind("load", function () {
                 if (typeof func === "object") {
                     Promise.resolve(func).then(function(value) {
                         let [data, bool, rtt] = value;
-                        button = $("#"+id);
+                        let button = $("#"+id);
                         if (bool == true) {
                             $(button).removeClass("btn-outline-primary");
                             $(button).removeClass("btn-outline-danger");

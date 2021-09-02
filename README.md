@@ -22,8 +22,11 @@ i
 **Firefox**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
 2. Unzip the file and you should have a folder named `vmware-sase-check`
-3. In Firefox enter the url 'about:debugging#/runtime/this-firefox'
-4. Use 'Load Temporary Add-on...' to load the manifest.json file from the folder extracted.
+3. Open Firefox
+4. Enter 'about:debugging' in the URL bar
+5. Click 'This Firefox'
+6. Click 'Load Temporary Add-on'
+7. Open the extension's directory and select manifest.json.
 
 **Edge**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
