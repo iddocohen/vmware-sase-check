@@ -136,27 +136,30 @@ function ipInRange(cidr,ip) {
 
 async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     let cws_url = "https://safe-cws-sase.vmware.com/safeview-static/img/input-icons.png";
-    function text(t, d=dom_process) {
-        $(d).text(t);
+    function text(t, d=dom_process, type="text") {
+        if (type == "text"){
+            $(d).text(t);
+        } else if (type == "html") {
+            $(d).html(t);
+        }
     }
 
     async function testSourceIP () {
+        let ret = [];
         let ipify = await doAjax("http://api.ipify.org/");
         if (ipify[1].status == 200) {
             if (ValidateIPaddress(ipify[1].responseText)) {
                  for (let i = 0; i < sase_ip_ranges.length; i++) {
                     if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
-                        return ipify[1].responseText;
+                        return [true, ipify[1].responseText];
                     }
                  } 
-                 log ("IP not found in range");
+                 return [false, `You are <strong> partially </strong> behind CWS. <br> Your external IP (${ipify[1].responseText}) does not correspond to VMware CWS range <br>but you can reach some of the CWS service. <br><strong>Please make sure that all HTTP/HTTPs traffic is send towards CWS.</strong>`];
             } else {
-                log ("IP received by ipify was not valid")
+                return [false, `Not sure if you are behind CWS. IPify API returned invalid IP (${ipify[1].responseText}). <strong>Please try again later.</strong>`];
             }
-        } else {
-            log ("Cannot reach ipify to determine IP")
-        }
-        return "";
+        } 
+        return [false, `Not sure if you are behind CWS. IPify API was not reachable (${ipify[1].status}). <strong>Please try again later.</strong>`]
     }
 
     async function getGeoCity (ip) {
@@ -175,12 +178,12 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
     text("Testing connection towards VMware CWS . . .");
 
-    let behindCWS = await testSourceIP();
+    let [behindCWS, behindCWStext] = await testSourceIP();
     let geoCity = "";
 
-    if (behindCWS != "") {
+    if (behindCWS) {
         text ("You are behind CWS. Will test further...");
-        geoCity   = await getGeoCity(behindCWS);
+        geoCity   = await getGeoCity(behindCWStext);
     } else {
         text ("The response received indicates you are not behind VMware CWS service. Double checking...");
     }
@@ -208,14 +211,14 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
                 if (behindCWS) {
-                    let str = `You are behind VMware CWS. The IP you are using is ${behindCWS}`;
+                    let str = `You are behind VMware CWS. The IP you are using is ${behindCWStext}`;
                     if (geoCity != "") {
                         str += ` in ${geoCity}`;
                     }
                     str += ".";
                     text(str);
                 } else {
-                    text ("You are behind VMware CWS but external IP used could not be determined.");
+                    text (behindCWStext, dom_process, "html");
                 } 
             });
         } else {
