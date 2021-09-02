@@ -10,7 +10,6 @@
 *None yet as in Beta stage* 
 
 ## Installation Instructions
-i
 **Google Chrome**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
 2. Unzip the file and you should have a folder named `vmware-sase-check`.
