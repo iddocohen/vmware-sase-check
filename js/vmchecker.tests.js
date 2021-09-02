@@ -299,25 +299,18 @@ $(window).bind("load", function () {
     }
     $('.btn').mouseover(function() {
         let attr = $(this).attr('data-tested');
-        if (attr == 'blocked'){
-            $(this).removeClass("btn-outline-success");
-            $(this).addClass("btn-outline-primary");
-            $(this).text("Re-run Test");
-        } else if (attr == 'unblocked' || attr == 'error') {
-            $(this).removeClass("btn-outline-danger");
-            $(this).addClass("btn-outline-primary");
+        if (attr && attr != "no") {
+            $(this).attr("class", "").addClass("btn btn-outline-primary");
             $(this).text("Re-run Test");
         }
     })
     $('.btn').mouseleave(function() {
         let attr = $(this).attr('data-tested');
         if (attr == 'blocked'){
-            $(this).addClass("btn-outline-success");
-            $(this).removeClass("btn-outline-primary");
+            $(this).attr("class", "").addClass("btn btn-outline-success");
             $(this).text("Blocked");
         } else if (attr == 'unblocked' || attr == 'error') {
-            $(this).addClass("btn-outline-danger");
-            $(this).removeClass("btn-outline-primary");
+            $(this).attr("class", "").addClass("btn btn-outline-danger");
             if ( attr == 'unblocked') {
                 $(this).text("Unblocked");
             }else {
@@ -328,12 +321,15 @@ $(window).bind("load", function () {
     $('.btn').on("click", function() {
         let id = $(this).attr('id');
         let category = $(this).attr('data-category');
-
+        let button = $("#"+id);
         if (id == "test_all") {
             $('button[data-type="test"]').click();
             return true;
         }
-         
+        if (id != "test_all" && id != "cws_check") {
+            $(button).attr("class", "").addClass("btn btn-outline-secondary");
+            $(button).text('Progress');
+        }
         switch (category) {
             case "cws": 
                 checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
@@ -344,18 +340,13 @@ $(window).bind("load", function () {
                 if (typeof func === "object") {
                     Promise.resolve(func).then(function(value) {
                         let [data, bool, rtt] = value;
-                        let button = $("#"+id);
                         if (bool == true) {
-                            $(button).removeClass("btn-outline-primary");
-                            $(button).removeClass("btn-outline-danger");
-                            $(button).addClass("btn-outline-success");
+                            $(button).attr("class", "").addClass("btn btn-outline-success");
                             $(button).attr("data-tested","blocked");
                             $(button).text('Blocked');
                             $(button).parent().parent().parent().find("p.text-muted").text("Category identified by CWS as '"+data+"'. Response time was "+rtt+"s");
                         }else{
-                            $(button).removeClass("btn-outline-primary");
-                            $(button).removeClass("btn-outline-success");
-                            $(button).addClass("btn-outline-danger");
+                            $(button).attr("class", "").addClass("btn btn-outline-danger");
                             $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
                         }
                         if (bool == false) {
