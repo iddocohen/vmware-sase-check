@@ -52,10 +52,17 @@ const config = [
      },
      { 
        title: "Block access to adult and pornography content",
-       desc: "This test attempts to visit a known adult website and download a icon. Failing this test means you have not configured block 'Adult and Pornography' under 'Web Category'.",
+       desc: "This test attempts to visit a known adult website and download a icon. Failing this test means you have not configured to block 'Adult and Pornography' under 'Web Category'.",
        id: "block_adult",
        category: "website",
        website: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico"
+     },
+     {
+        title: "Block spyware and adware",
+        desc: "This test attempts to download spyware. Failing this test means you have not configured to block 'Spyware and Adware' under 'Web Category'.",
+        id: "block_spwyware",
+        category: "website",
+        website: "https://counter.yadro.ru/id127/ddp-id.gif"
      },
      {
         title: "Block malware over HTTPs",
