@@ -219,7 +219,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 } 
             });
         } else {
-            text("CWS request was changed to '"+xhr.responseURL+"'. This will cause CWS not to work in your environment.");
+            text(`CWS request was changed to '${xhr.responseURL}'. This will cause CWS not to work in your environment.`);
         }
     } else if (xhr.status == 404 && behindCWS == "") {
         text ("After double checking it seems you are not behind CWS.");

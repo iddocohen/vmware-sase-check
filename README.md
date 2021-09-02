@@ -12,15 +12,15 @@
 ## Installation Instructions
 **Google Chrome**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check`.
+2. Unzip the file and you should have a folder named `vmware-sase-check-main`.
 3. In Chrome go to the extensions page (`chrome://extensions`).
 4. Enable Developer Mode.
-5. Drag the `vmware-sase-check` folder anywhere on the page to import it (do not delete the folder afterwards).
+5. Drag the `vmware-sase-check-main` folder anywhere on the page to import it (do not delete the folder afterwards).
 6. Click then on the extension icon (on the top right corner) and pin the new plugin (so you can see it all the time). 
 
 **Firefox**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check`
+2. Unzip the file and you should have a folder named `vmware-sase-check-main`
 3. Open Firefox
 4. Enter 'about:debugging' in the URL bar
 5. Click 'This Firefox'
@@ -29,7 +29,7 @@
 
 **Edge**
 1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check`
+2. Unzip the file and you should have a folder named `vmware-sase-check-main`
 3. In Edge enable developer mode by going to 'about:flags' and check box 'Enable extension developer features'.
 4. Restart Edge.
 5. Click on Settings (icon with ...).
