@@ -274,6 +274,11 @@ function progress(sum, count){
     $(".progress-bar").text(num+"%");
 }
 
+function changeButton(object, text, css="primary") {
+    $(object).attr("class", "").addClass("btn btn-outline-"+css);
+    $(object).text(text);
+}
+
 $(window).bind("load", function () {
     for (let i = 0; i < config.length; i++){
         let o = config[i];
@@ -300,22 +305,17 @@ $(window).bind("load", function () {
     $('.btn').mouseover(function() {
         let attr = $(this).attr('data-tested');
         if (attr && attr != "no") {
-            $(this).attr("class", "").addClass("btn btn-outline-primary");
-            $(this).text("Re-run Test");
+            changeButton(this, "Re-run Test");
         }
     })
     $('.btn').mouseleave(function() {
         let attr = $(this).attr('data-tested');
         if (attr == 'blocked'){
-            $(this).attr("class", "").addClass("btn btn-outline-success");
-            $(this).text("Blocked");
-        } else if (attr == 'unblocked' || attr == 'error') {
-            $(this).attr("class", "").addClass("btn btn-outline-danger");
-            if ( attr == 'unblocked') {
-                $(this).text("Unblocked");
-            }else {
-                $(this).text("Error");
-            }
+            changeButton(this, "Blocked", "success");
+        } else if (attr == 'unblocked') {
+            changeButton(this, "Unblocked", "danger");
+        } else if (attr == 'error') {
+            changeButton(this, "Error", "danger");
         }
     });
     $('.btn').on("click", function() {
@@ -327,8 +327,7 @@ $(window).bind("load", function () {
             return true;
         }
         if (id != "test_all" && id != "cws_check") {
-            $(button).attr("class", "").addClass("btn btn-outline-secondary");
-            $(button).text('Progress');
+            changeButton(button, "Progress", "secondary");
         }
         switch (category) {
             case "cws": 
@@ -341,20 +340,17 @@ $(window).bind("load", function () {
                     Promise.resolve(func).then(function(value) {
                         let [data, bool, rtt] = value;
                         if (bool == true) {
-                            $(button).attr("class", "").addClass("btn btn-outline-success");
                             $(button).attr("data-tested","blocked");
-                            $(button).text('Blocked');
+                            changeButton(button, "Blocked", "success");
                             $(button).parent().parent().parent().find("p.text-muted").text("Category identified by CWS as '"+data+"'. Response time was "+rtt+"s");
-                        }else{
-                            $(button).attr("class", "").addClass("btn btn-outline-danger");
-                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
-                        }
-                        if (bool == false) {
+                        }else if (bool == false) {
                             $(button).attr("data-tested","unblocked");
-                            $(button).text('Unblocked');
-                        }else if (bool == undefined){
+                            changeButton(button, "Unblocked", "danger");
+                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
+                        } else {
                             $(button).attr("data-tested","error");
-                            $(button).text('Error');
+                            changeButton(button, "Error", "danger");
+                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
                         }
                         progress(config.length, $(".btn-outline-success").length);
                     });
