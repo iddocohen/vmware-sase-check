@@ -1,4 +1,4 @@
-const top10_domains = [
+const testing_domains = [
     "google.com",
     "youtube.com",
     "facebook.com",
@@ -88,4 +88,4 @@ const config = [
 
 ];
 
-export { config, sase_ip_ranges, top10_domains};
+export { config, sase_ip_ranges, testing_domains};

@@ -1,4 +1,4 @@
-import {config, top10_domains, sase_ip_ranges} from './vmchecker.config.js';
+import {config, testing_domains, sase_ip_ranges} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
 var error = console.error.bind(console);
@@ -105,7 +105,7 @@ async function doAjax(url, type="html") {
     return ret;
 }
 
-function ValidateIPaddress(ipaddress) {  
+function validateIPaddress(ipaddress) {  
     if (/^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/.test(ipaddress)) {  
         return true  
     }  
@@ -148,7 +148,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         let ret = [];
         let ipify = await doAjax("http://api.ipify.org/");
         if (ipify[1].status == 200) {
-            if (ValidateIPaddress(ipify[1].responseText)) {
+            if (validateIPaddress(ipify[1].responseText)) {
                  for (let i = 0; i < sase_ip_ranges.length; i++) {
                     if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
                         return [true, ipify[1].responseText];
@@ -193,8 +193,8 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     if (xhr.status == 200) {
          if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
             let deferreds = [];
-            for (let i = 0; i < top10_domains.length; i++) {
-                let new_proxy_url = "https://"+top10_domains[i];
+            for (let i = 0; i < testing_domains.length; i++) {
+                let new_proxy_url = "https://"+testing_domains[i];
                 deferreds.push(doAjax(new_proxy_url));
             }
             $.when.apply($, deferreds).done(function(){
