@@ -134,6 +134,7 @@ function ipInRange(cidr,ip) {
    return false;
 }
 
+
 async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     let cws_url = "https://safe-cws-sase.vmware.com/safeview-static/img/input-icons.png";
     function text(t, d=dom_process, type="text") {
@@ -151,15 +152,15 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
             if (validateIPaddress(ipify[1].responseText)) {
                  for (let i = 0; i < sase_ip_ranges.length; i++) {
                     if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
-                        return [true, ipify[1].responseText];
+                        return [true, ipify[1].responseText, 0];
                     }
                  } 
-                 return [false, `You are <strong> partially </strong> behind CWS. <br> Your external IP (${ipify[1].responseText}) does not correspond to VMware CWS range <br>but you can reach some of the CWS service. <br><strong>Please make sure that all HTTP/HTTPs traffic is send towards CWS.</strong>`];
+                 return [false, `You are <strong> partially </strong> behind CWS.`, 1];
             } else {
-                return [false, `Not sure if you are behind CWS. IPify API returned invalid IP (${ipify[1].responseText}). <strong>Please try again later.</strong>`];
+                return [false, `Not sure if you are behind CWS.`, 2];
             }
         } 
-        return [false, `Not sure if you are behind CWS. IPify API was not reachable (${ipify[1].status}). <strong>Please try again later.</strong>`]
+        return [false, `Not sure if you are behind CWS.`, 3]
     }
 
     async function getGeoCity (ip) {
@@ -178,7 +179,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
     text("Testing connection towards VMware CWS . . .");
 
-    let [behindCWS, behindCWStext] = await testSourceIP();
+    let [behindCWS, behindCWStext, behindCWSerror] = await testSourceIP();
     let geoCity = "";
 
     if (behindCWS) {
@@ -218,13 +219,14 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                     str += ".";
                     text(str);
                 } else {
+                    displayMessage(behindCWSerror);
                     text (behindCWStext, dom_process, "html");
                 } 
             });
         } else {
             text(`CWS request was changed to '${xhr.responseURL}'. This will cause CWS not to work in your environment.`);
         }
-    } else if (xhr.status == 404 && behindCWS == "") {
+    } else if (xhr.status == 404 && behindCWS == false) {
         text ("After double checking it seems you are not behind CWS.");
     } else if (xhr.status == 403) {
         text("Connection got blocked to CWS. Please check browser PAC, socket, proxy settings or even firewall settings.");
@@ -282,6 +284,17 @@ function changeButton(object, text, css="primary") {
     $(object).text(text);
 }
 
+function displayMessage(id, type="warning") {
+    let url  = `https://iddocohen.github.io/vmware-sase-check/`;
+    let path = `${url}/docs/error/${id}.html`;
+    let str  = `Warning: Please visit <a class="alert-link" target="_blank" rel="noopener noreferrer" href="${path}">#${id}</a> to get more info.`;
+    $('#alert_message').html(str);
+    $('.alert').attr('class', '').addClass(`alert alert-${type}`);
+    $('.alert').fadeIn();
+    //$('html,body').scrollTop(0);
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+}
+
 $(window).bind("load", function () {
     for (let i = 0; i < config.length; i++){
         let o = config[i];
@@ -298,19 +311,23 @@ $(window).bind("load", function () {
                 </div>
               </div>
               <div class="card-footer">
-                  <p class="card-text text-muted right10"><br></p>
+                  <p class="card-text text-muted right10" id="${o.id}_text"><br></p>
               </div>
             </div>
           </div>
         `;
         $("#checks_content").append(div);
     }
+    $('.btn-close').on('click', function() {
+        $(".alert").attr('class','').addClass('alert');
+        $(".alert").fadeOut();
+    });
     $('.btn').mouseover(function() {
         let attr = $(this).attr('data-tested');
         if (attr && attr != "no") {
             changeButton(this, "Re-run Test");
         }
-    })
+    });
     $('.btn').mouseleave(function() {
         let attr = $(this).attr('data-tested');
         if (attr == 'blocked'){
@@ -322,9 +339,11 @@ $(window).bind("load", function () {
         }
     });
     $('.btn').on("click", function() {
-        let id = $(this).attr('id');
-        let category = $(this).attr('data-category');
-        let button = $("#"+id);
+        let id          = $(this).attr('id');
+        let category    = $(this).attr('data-category');
+        let button      = $("#"+id);
+        let footer_text = $("#"+id+"_text");
+
         if (id == "test_all") {
             $('button[data-type="test"]').click();
             return true;
@@ -345,15 +364,15 @@ $(window).bind("load", function () {
                         if (bool == true) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
-                            $(button).parent().parent().parent().find("p.text-muted").text("Category identified by CWS as '"+data+"'. Response time was "+rtt+"s");
+                            $(footer_text).text(`Category identified by CWS as '${data}'. Response time was ${rtt}s`);
                         }else if (bool == false) {
                             $(button).attr("data-tested","unblocked");
                             changeButton(button, "Unblocked", "danger");
-                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
+                            $(footer_text).text(`Response time was ${rtt}s`);
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
-                            $(button).parent().parent().parent().find("p.text-muted").text("Response time was "+rtt+"s");
+                            $(footer_text).text(`Response time was ${rtt}s`);
                         }
                         progress(config.length, $(".btn-outline-success").length);
                     });
@@ -361,6 +380,7 @@ $(window).bind("load", function () {
                 break;
         }
     });
+    displayMessage(1);
     $('#cws_check').click();
 });
 

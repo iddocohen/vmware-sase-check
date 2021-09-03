@@ -24,6 +24,17 @@
   border-bottom-right-radius: 0;
 }
 
+#message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+#inner-message {
+    margin: 0 auto;
+    width: 50%;
+}
+
 .top4 { margin-top:4px; }
 .top5 { margin-top:5px; }
 .top7 { margin-top:7px; }
@@ -137,3 +148,6 @@
     0% { opacity:0; }
     100% { opacity:100%; }
 }
+
+
+
