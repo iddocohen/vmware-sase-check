@@ -227,11 +227,14 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
             text(`CWS request was changed to '${xhr.responseURL}'. This will cause CWS not to work in your environment.`);
         }
     } else if (xhr.status == 404 && behindCWS == false) {
-        text ("After double checking it seems you are not behind CWS.");
+        displayMessage(4);
+        text ("You are not behind CWS.");
     } else if (xhr.status == 403) {
-        text("Connection got blocked to CWS. Please check browser PAC, socket, proxy settings or even firewall settings.");
+        displayMessage(5, "danger");
+        text("Connection got blocked to CWS.");
     } else {
-        text(`CWS is not reachable (${xhr.status}). Please try again later.`);
+        displayMessage(6, "danger");
+        text(`CWS was not reachable.`);
     }   
 }    
 
@@ -285,13 +288,12 @@ function changeButton(object, text, css="primary") {
 }
 
 function displayMessage(id, type="warning") {
-    let url  = `https://iddocohen.github.io/vmware-sase-check/`;
-    let path = `${url}/docs/error/${id}.html`;
+    let url  = `https://iddocohen.github.io/vmware-sase-check`;
+    let path = `${url}/errors/${id}.html`;
     let str  = `Warning: Please visit <a class="alert-link" target="_blank" rel="noopener noreferrer" href="${path}">#${id}</a> to get more info.`;
     $('#alert_message').html(str);
     $('.alert').attr('class', '').addClass(`alert alert-${type}`);
     $('.alert').fadeIn();
-    //$('html,body').scrollTop(0);
     $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
 
@@ -380,7 +382,6 @@ $(window).bind("load", function () {
                 break;
         }
     });
-    displayMessage(1);
     $('#cws_check').click();
 });
 
