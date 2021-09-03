@@ -1,4 +1,4 @@
-import {config, testing_domains, sase_ip_ranges} from './vmchecker.config.js';
+import {config, testing_domains} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
 var error = console.error.bind(console);
@@ -137,6 +137,8 @@ function ipInRange(cidr,ip) {
 
 async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     let cws_url = "https://safe-cws-sase.vmware.com/safeview-static/img/input-icons.png";
+    let sase_ip_ranges = await getLocations();
+
     function text(t, d=dom_process, type="text") {
         if (type == "text"){
             $(d).text(t);
@@ -145,14 +147,24 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         }
     }
 
+    async function getLocations () {
+        let data = await doAjax("https://iddocohen.github.io/vmware-sase-check/config/locations.json", "json");
+        if (data[1].status == 200) {
+            return data[3].pops;
+        }
+        return null; 
+    }
     async function testSourceIP () {
+        if (sase_ip_ranges == null) {
+             return [false, `Could not retrieve VMware CWS IPs.`, 7];
+        }
         let ret = [];
         let ipify = await doAjax("http://api.ipify.org/");
         if (ipify[1].status == 200) {
             if (validateIPaddress(ipify[1].responseText)) {
                  for (let i = 0; i < sase_ip_ranges.length; i++) {
-                    if (ipInRange(sase_ip_ranges[i], ipify[1].responseText)) {
-                        return [true, ipify[1].responseText, 0];
+                    if (ipInRange(sase_ip_ranges[i].ip, ipify[1].responseText)) {
+                        return [true, ipify[1].responseText, sase_ip_ranges[i].pop];
                     }
                  } 
                  return [false, `You are <strong> partially </strong> behind CWS.`, 1];
@@ -163,6 +175,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         return [false, `Not sure if you are behind CWS.`, 3]
     }
 
+    /*
     async function getGeoCity (ip) {
         let ipapi = await doAjax("http://ip-api.com/json/"+ip, "json");
         if (ipapi[1].status == 200){
@@ -176,6 +189,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         }
         return "";
     }
+    */
 
     text("Testing connection towards VMware CWS . . .");
 
@@ -184,7 +198,8 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
     if (behindCWS) {
         text ("You are behind CWS. Will test further...");
-        geoCity   = await getGeoCity(behindCWStext);
+        //geoCity   = await getGeoCity(behindCWStext);
+        geoCity   = behindCWSerror;
     } else {
         text ("The response received indicates you are not behind VMware CWS service. Double checking...");
     }
