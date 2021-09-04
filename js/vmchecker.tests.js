@@ -227,12 +227,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
                 if (behindCWS) {
-                    let str = `You are behind VMware CWS. The IP you are using is ${behindCWStext}`;
-                    if (geoCity != "") {
-                        str += ` in ${geoCity}`;
-                    }
-                    str += ".";
-                    text(str);
+                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
                 } else {
                     displayMessage(behindCWSerror);
                     text (behindCWStext, dom_process, "html");
@@ -242,7 +237,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
             text(`CWS request was changed to '${xhr.responseURL}'. This will cause CWS not to work in your environment.`);
         }
     } else if (xhr.status == 404 && behindCWS == false) {
-        displayMessage(4);
+        displayMessage(4, "danger");
         text ("You are not behind CWS.");
     } else if (xhr.status == 403) {
         displayMessage(5, "danger");
