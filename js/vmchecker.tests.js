@@ -167,7 +167,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                         return [true, ipify[1].responseText, sase_ip_ranges[i].pop];
                     }
                  } 
-                 return [false, `You are <strong> partially </strong> behind CWS.`, 1];
+                 return [false, `You are <strong>partially</strong> behind CWS.`, 1];
             } else {
                 return [false, `Not sure if you are behind CWS.`, 2];
             }
@@ -293,7 +293,7 @@ function progress(sum, count){
 }
 
 function changeButton(object, text, css="primary") {
-    $(object).attr("class", "").addClass("btn btn-outline-"+css);
+    $(object).attr("class", "").addClass(`btn btn-outline-${css}`);
     $(object).text(text);
 }
 
