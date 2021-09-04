@@ -213,6 +213,12 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 let new_proxy_url = "https://"+testing_domains[i];
                 deferreds.push(doAjax(new_proxy_url));
             }
+            if (behindCWS) {
+                text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
+            } else {
+                displayMessage(behindCWSerror);
+                text (behindCWStext, dom_process, "html");
+            } 
             $.when.apply($, deferreds).done(function(){
                 let rtt_arr = [];
                 for (let i = 0; i < arguments.length; i++){
@@ -226,15 +232,10 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.mean}s`, dom_mean);
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
-                if (behindCWS) {
-                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
-                } else {
-                    displayMessage(behindCWSerror);
-                    text (behindCWStext, dom_process, "html");
-                } 
             });
         } else {
-            text(`CWS request was changed to '${xhr.responseURL}'. This will cause CWS not to work in your environment.`);
+            displayMessage(8, "danger");
+            text(`Request to VMware CWS got changed (${xhr.responseURL})`);
         }
     } else if (xhr.status == 404 && behindCWS == false) {
         displayMessage(4, "danger");
