@@ -24,11 +24,12 @@
     <div class="alert" style="display: none" role="alert" id="inner-message">
           <div class="d-flex align-items-center justify-content-between">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-            <div id="alert_message">test</div>
+            <div id="alert_message"></div>
             <button type="button" class="btn-close" aria-label="Close"></button>
           </div>
     </div>
     <div class="d-md-flex align-items-center justify-content-between top15">
+        <img src="../icon/icon48.png"></img>
         <h1 class="bd-title left10">VMware Cloud Web Security (CWS) Checker</h1>
         <a class="btn btn-primary right10" href="https://github.com/iddocohen/vmware-sase-check/blob/main/README.md" title="View and comment on the project" target="_blank" rel="noopener">View on GitHub</a>
     </div>
@@ -81,7 +82,19 @@
           </div>
       </div>
     </div>
-    <div class="row row-cols-1 row-cols-md-2 g-4 top30" id="checks_content">
+    <div class="row top30">
+        <div class="card">
+            <div class="card-header text-white bg-secondary"><h4>Websites</h4></div>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 g-4 top15" id="checks_content_website">
+    </div>
+    <div class="row top30">
+        <div class="card">
+            <div class="card-header text-white bg-secondary"><h4>Malwares</h4></div>
+        </div>
+    </div>
+    <div class="row row-cols-1 row-cols-md-2 g-4 top15" id="checks_content_malware">
     </div>
     </body>
 </html>

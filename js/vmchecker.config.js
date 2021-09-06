@@ -44,28 +44,28 @@ const config = [
         title: "Block malware over HTTPs",
         desc: "This test attempts to download malware over HTTPs",
         id: "block_https_malware",
-        category: "website",
+        category: "malware",
         website: "https://secure.eicar.org/eicar.com"
      },
      {
         title: "Block malware over HTTP",
         desc: "This test attempts to download malware over HTTP",
         id: "block_http_malware",
-        category: "website",
+        category: "malware",
         website: "http://www.rexswain.com/eicar2.zip"
      },
      {
         title: "Block malware download from cloud app",
         desc: "This test attempts to download a malware from popular cloud applications",
         id: "block_cloud_malware",
-        category: "website",
+        category: "malware",
         website: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip"
      },
      {
         title: "Block file-based exploit",
         desc: "Checks whether you are protected from known file-based exploits.",
         id: "block_file_exploits",
-        category: "website",
+        category: "malware",
         website: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf"
      },
 

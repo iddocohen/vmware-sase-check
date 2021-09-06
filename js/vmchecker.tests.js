@@ -213,12 +213,6 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 let new_proxy_url = "https://"+testing_domains[i];
                 deferreds.push(doAjax(new_proxy_url));
             }
-            if (behindCWS) {
-                text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
-            } else {
-                displayMessage(behindCWSerror);
-                text (behindCWStext, dom_process, "html");
-            } 
             $.when.apply($, deferreds).done(function(){
                 let rtt_arr = [];
                 for (let i = 0; i < arguments.length; i++){
@@ -228,10 +222,19 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                         rtt_arr.push(res_rtt);
                     }
                 }
+
                 let stats = new Stats(rtt_arr);
                 text(`${stats.mean}s`, dom_mean);
                 text(`${stats.std}s`, dom_std);
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
+
+                if (behindCWS) {
+                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
+                } else {
+                    displayMessage(behindCWSerror);
+                    text (behindCWStext, dom_process, "html");
+                } 
+ 
             });
         } else {
             displayMessage(8, "danger");
@@ -307,8 +310,21 @@ function displayMessage(id, type="warning") {
     $('.alert').fadeIn();
     $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
+$(function() {
+    $.getJSON("../manifest.json", function (data) { 
+        let version = "v"+data.version;
+        let title = $(".bd-title").text();
+        if (version === "v0.1") {
+            version = "beta"
+        }
+        $(".bd-title").html(title+`<small><sub>(${version})</sub></small>`);   
+    });
+ 
+});
 
 $(window).bind("load", function () {
+
+
     for (let i = 0; i < config.length; i++){
         let o = config[i];
         let div = `
@@ -329,7 +345,7 @@ $(window).bind("load", function () {
             </div>
           </div>
         `;
-        $("#checks_content").append(div);
+        $(`#checks_content_${o.category}`).append(div);
     }
     $('.btn-close').on('click', function() {
         $(".alert").attr('class','').addClass('alert');
@@ -368,6 +384,7 @@ $(window).bind("load", function () {
             case "cws": 
                 checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
                 break;
+            case "malware":
             case "website":
                 let website = lookup(id);
                 let func = block_website(website);
