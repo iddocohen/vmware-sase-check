@@ -283,7 +283,7 @@ function lookup(id) {
     for (let i = 0; i < config.length; i++) {
         let o = config[i];
         if (o.id == id) {
-            return o.website;            
+            return [o.how, o.fail, o.load, o.website];            
         }   
     }
     return false;
@@ -313,17 +313,16 @@ function displayMessage(id, type="warning") {
 $(function() {
     $.getJSON("../manifest.json", function (data) { 
         let version = "v"+data.version;
-        let title = $(".bd-title").text();
+        let html = $(".navbar-brand").html();
         if (version === "v0.1") {
             version = "beta"
         }
-        $(".bd-title").html(title+`<small><sub>(${version})</sub></small>`);   
+        $(".navbar-brand").html(html+`<small><small><sub>(${version})</sub></small></small>`);   
     });
  
 });
 
 $(window).bind("load", function () {
-
 
     for (let i = 0; i < config.length; i++){
         let o = config[i];
@@ -332,15 +331,16 @@ $(window).bind("load", function () {
             <div class="card">
               <div class="card-header">
                 <h5>${o.title}</h5>
+                <div class="help-tip"><p>${o.how}</p></div>
               </div>
               <div class="card-body">
-                <p class="card-text">${o.desc}</p>
+                <p class="card-text" id="${o.id}_body_text">${o.detail}<br><br>${o.desc}</p>
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                     <button class="btn btn-outline-primary" data-tested="no" data-type="test" data-category="${o.category}" type="button" id="${o.id}">Test</button><br>
                 </div>
               </div>
               <div class="card-footer">
-                  <p class="card-text text-muted right10" id="${o.id}_text"><br></p>
+                  <p class="card-text text-muted right10" id="${o.id}_footer_text"><br></p>
               </div>
             </div>
           </div>
@@ -354,7 +354,7 @@ $(window).bind("load", function () {
     $('.btn').mouseover(function() {
         let attr = $(this).attr('data-tested');
         if (attr && attr != "no") {
-            changeButton(this, "Re-run Test");
+            changeButton(this, "Re-run");
         }
     });
     $('.btn').mouseleave(function() {
@@ -371,7 +371,8 @@ $(window).bind("load", function () {
         let id          = $(this).attr('id');
         let category    = $(this).attr('data-category');
         let button      = $("#"+id);
-        let footer_text = $("#"+id+"_text");
+        let footer_text = $("#"+id+"_footer_text");
+        let body_text   = $("#"+id+"_body_text");
 
         if (id == "test_all") {
             $('button[data-type="test"]').click();
@@ -384,9 +385,10 @@ $(window).bind("load", function () {
             case "cws": 
                 checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
                 break;
-            case "malware":
-            case "website":
-                let website = lookup(id);
+            case "urlfilter":
+            case "cinspect":
+                let [how, fail, load, website] = lookup(id);
+                $(footer_text).text(load);
                 let func = block_website(website);
                 if (typeof func === "object") {
                     Promise.resolve(func).then(function(value) {
@@ -398,10 +400,12 @@ $(window).bind("load", function () {
                         }else if (bool == false) {
                             $(button).attr("data-tested","unblocked");
                             changeButton(button, "Unblocked", "danger");
+                            $(body_text).html(fail);
                             $(footer_text).text(`Response time was ${rtt}s`);
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
+                            $(body_text).html(fail);
                             $(footer_text).text(`Response time was ${rtt}s`);
                         }
                         progress(config.length, $(".btn-outline-success").length);
