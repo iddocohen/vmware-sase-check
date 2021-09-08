@@ -12,16 +12,13 @@ function round(number, precision) {
 
 // Basic Timer Class
 function Timer () {
-    //this._start = new Date();
     this._start = performance.now();
 
     this.elapsed = function() {
-        //return (new Date()) - this._start;
         return round((performance.now() - this._start)/1000, 2);
     }
 
     this.reset = function () {
-        //this._start = new Date();
         this._start = performance.now();
     }
 }
@@ -174,22 +171,6 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         } 
         return [false, `Not sure if you are behind CWS.`, 3]
     }
-
-    /*
-    async function getGeoCity (ip) {
-        let ipapi = await doAjax("http://ip-api.com/json/"+ip, "json");
-        if (ipapi[1].status == 200){
-            if (ipapi[3].hasOwnProperty("city")) {
-                return ipapi[3].city;            
-            } else {
-                log ("Geo-location service did not give us a city in JSON");
-            }
-        } else {
-            log ("Geo-location service not available");
-        }
-        return "";
-    }
-    */
 
     text("Testing connection towards VMware CWS . . .");
 

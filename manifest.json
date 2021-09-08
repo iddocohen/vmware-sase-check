@@ -1,11 +1,9 @@
 {
   "manifest_version": 2,
-
-  "name": "VMware SASE Browser Checker",
-  "description": "Checking browser setting to determine if browser can reach Cloud Web Security (CWS) functionalities",
-  "version": "0.1",
+  "name": "VMware CWS Checker",
+  "description": "Auto test performance and security enforcements against VMware Cloud Web Security (CWS) offering.",
+  "version": "0.2",
   "author": "Iddo Cohen",
-
   "icons": { 
         "16": "icon/icon16-white.png",
         "48": "icon/icon48-white.png",

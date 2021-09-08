@@ -1,5 +1,10 @@
 const config = [
     {
+        title: "How can I contribute?",
+        detail: "Feel free to fork the code and enhance it, test the extension and provide feedback or just give me a star in GitHub - all mechansims help to improve the extension or my motivation &#128521;",
+        enable: 1
+    },
+    {
         title: "What are the prerequisites to successfully test the tests in the extension?",
         detail: `
             As a minimum recommended:<br><br>
@@ -9,7 +14,7 @@ const config = [
                 <li>Allow <strong>*.github.com</strong>, <strong>*.github.io</strong> and <strong>api.ipify.org</strong> to reach the internet.</li>
             </ul>
             <br>
-            Rather then be specific on which HTTP/HTTPs traffic should or should not go through VMware CWS, I would recommend to send all traffic to VMware CWS.
+            Rather then be specific on which HTTP/HTTPs traffic should or should not go through VMware CWS, I would recommend to send all traffic to VMware CWS for the duration of the testing.
 
         `,
         enable: 1
@@ -25,8 +30,8 @@ const config = [
                 </ul>
             After confirming the above, it will do a <strong>performance</strong> test:<br><br>
                 <ul>
-                    <li> It will use the domains defined in the file <code>js/vmchecker.config.js</code> with variable name <code>testing_domains</code>.</li>
-                    <li> It will calculate the response time of each and calculate the average, std and percentitles accordingly</li>
+                    <li> It will use the domains defined in the file <code>js/vmchecker.config.js</code> within the variable name <code>testing_domains</code>.</li>
+                    <li> It will calculate the response time of each and calculate the total average, std and percentitle statistics.</li>
                 </ul>
             <br>
             One can alter the <code>test_domains</code> variable to include or exclude domains for testing. Please only note, adding more domains, will cause more load to your browser.
@@ -35,7 +40,7 @@ const config = [
     },
     {
         title: "Are the test performed harmful for my PC?",
-        detail: "<strong>No</strong>, the extension uses a simple HTTP GET to evaluate the response for it.",
+        detail: "<strong>No</strong>, the extension uses a simple HTTP GET to evaluate the received response form it.",
         enable: 1
     },
     {
@@ -49,6 +54,19 @@ const config = [
         `,
         enable: 1
     },
+    {
+        title: "Can I change the test URLs used?",
+        detail: "<strong>Yes</strong>, one can edit the <code>js/vmchecker.config.js</code> to not only alter the URLs but add/delete tests. In the future, I will add a option page to the extension to be able to alter URLs accordingly.",
+        enable: 1
+
+    },
+    {
+        title: "Why is there no phishing test case?",
+        detail: "Today the majority of browsers are blocking websites which are considered phishing. As soon as the extension tries to reach such websites, the browser will block it accordingly and display a warning to the user. As such, there is no means for the extension to test VMware CWS configuration. However, one can test it manually by <a href='https://www.phishtank.com/phish_search.php?valid=y&active=y&Search=Search' class='link-primary' target='_blank' rel='noopener'>visting PhishTank</a> and select a website to test from. <strong>CAUTION: This websites can potentially be harmful</strong>",
+        enable: 1
+
+    },
+
 ]
 
 $(function() {
@@ -61,13 +79,12 @@ $(function() {
         $(".navbar-brand").html(html+`<small><small><sub>(${version})</sub></small></small>`);   
     });
  
-    let html = "";
     for (let i=0; i < config.length; i++) { 
        let o = config[i];
        if (!o.enable) {
             continue;
        }
-       html += `
+       let div = `
           <div class="accordion-item">
             <h2 class="accordion-header" id="panelsStayOpen-heading${i}">
               <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse${i}" aria-expanded="false" aria-controls="panelsStayOpen-collapse${i}">
@@ -81,9 +98,9 @@ $(function() {
             </div>
           </div>
        `; 
+       $("#accordionPanels").append(div);
 
     }
-    $("#accordionPanels").html(html);
 
 });
 
