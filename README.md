@@ -6,7 +6,7 @@
 
 *VMware CWS Checker is a web browser extension to help check your security with (or even without) VMware CWS service*
 
-![VMware CWS Checker Overview](https://github.com/iddocohen/vco-stats-downloader/blob/main/screenshot/Overview.png?raw=true)
+<img src="https://github.com/iddocohen/vmware-sase-check/blob/main/screenshot/Overview-google.png?raw=true" alt="Overview of VMware CWS Checker">
 
 ## Releases
 - 0.2 
