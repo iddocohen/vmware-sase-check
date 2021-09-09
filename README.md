@@ -9,7 +9,13 @@
 <img src="https://github.com/iddocohen/vmware-sase-check/blob/main/screenshot/Overview-google.png?raw=true" alt="Overview of VMware CWS Checker">
 
 ## Releases
-- 0.2 
+- Unstable:
+    - current main repository
+- Stable: 
+    - [v0.2](https://github.com/iddocohen/vmware-sase-check/releases/tag/v0.2) 
+
+## Roadmap
+[Please visit the Trello page](https://trello.com/b/yEeXfNJv/vmware-cws-checker-roadmap)
 
 ## Installation Instructions
 **Google Chrome**
@@ -18,16 +24,16 @@
 
 In the meantime:
 
-1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check-main`.
+1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
+2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
 3. In Chrome go to the extensions page (`chrome://extensions`).
 4. Enable Developer Mode.
 5. Drag the `vmware-sase-check-main` folder anywhere on the page to import it (do not delete the folder afterwards).
 6. Click then on the extension icon (on the top right corner) and pin the new plugin (so you can see it all the time). 
 
 **Firefox**
-1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check-main`
+1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
+2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
 3. Open Firefox
 4. Enter 'about:debugging' in the URL bar
 5. Click 'This Firefox'
@@ -35,8 +41,8 @@ In the meantime:
 7. Open the extension's directory and select manifest.json.
 
 **Edge**
-1. Download this repo as a [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check-main`
+1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
+2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
 3. In Edge enable developer mode by going to 'about:flags' and check box 'Enable extension developer features'.
 4. Restart Edge.
 5. Click on Settings (icon with ...).
@@ -54,6 +60,10 @@ In the meantime:
 3. Commit your changes (`git commit -am 'Add some fooBar'`)
 4. Push to the branch (`git push origin feature/fooBar`)
 5. Create a new Pull Request
+
+or 
+
+Leave a GitHub star on the top right. 
 
 ## Licence
 MIT, see ``LICENSE``
