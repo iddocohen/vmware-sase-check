@@ -17,12 +17,12 @@
 ## Roadmap
 [Please visit the Trello page](https://trello.com/b/yEeXfNJv/vmware-cws-checker-roadmap)
 
-## Installation Instructions
+## Getting Started
 **Google Chrome**
 
-*v0.2 will be soon in google extension webstore.*
+[On web store](https://chrome.google.com/webstore/detail/vmware-cws-checker/aaahmofhpokmcblajnpgledopdmaedfl)
 
-In the meantime:
+Or via:
 
 1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
 2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
