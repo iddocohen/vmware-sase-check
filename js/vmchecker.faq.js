@@ -44,10 +44,11 @@ const config = [
         enable: 1
     },
     {
-        title: "What does 'Blocked', 'Unblocked or 'Error'  mean after test has been executed?",
+        title: "What does 'Blocked', 'Blocked but...', 'Unblocked or 'Error'  mean after test has been executed?",
         detail: `If test has a state:<br><br>
             <ul>
                 <li><strong>Blocked</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS, meaning it got blocked. It double checks that 403 has sent the message.</li>
+                <li><strong>Blocked but...</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS for the main url test-case; however, other urls in the test-case received a different HTTP code as expected. For example, the Vimeo test-case under CASB tries to test of if search is getting blocked and if other parts of Vimeo are still working as expectged. If URL filtering is used to block Vimeo then all the urls will not get blocked, which means, yes searching got blocked but everything else as well - which is not what was expected.</li>
                 <li><strong>Unblocked</strong> it means the extension received HTTP 200 (OK). Either configuration was not applied correct or the content bypassed CWS.</li>
                 <li><strong>Error</strong> it means any other response status which is not 403 or 200 has been received. This could be caused by many factors, e.g. the testing site is unreachable (404) or another security enforcement has protected one. Please try again later and if it occurs again please fill in a ticket.</li>
             </ul>
