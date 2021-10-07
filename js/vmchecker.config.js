@@ -21,7 +21,12 @@ const config = [
        load : "Testing your ability to access anonymizing or proxy websites...",
        id: "block_proxy",
        category: "urlfilter",
-       website: "https://www.proxysite.com/assets/images/logo.png"
+       websites: [ 
+              {
+                url: "https://www.proxysite.com/assets/images/logo.png",
+                code: 403
+              }
+       ]
      },
      { 
        title: "Block access to websites with gambling content",
@@ -32,7 +37,12 @@ const config = [
        load : "Testing your ability to download the image from the gambling website...",
        id: "block_gambling",
        category: "urlfilter",
-       website: "https://www.bet365.com/sports-assets/sports/FooterModule/assets/bet365-logo.svg"
+       websites: [ 
+              {
+                url: "https://www.bet365.com/sports-assets/sports/FooterModule/assets/bet365-logo.svg",
+                code: 403
+              }
+       ]
      },
      { 
        title: "Block access to adult and pornography content",
@@ -43,7 +53,12 @@ const config = [
        load : "Testing for your ability to access adult websites...",
        id: "block_adult",
        category: "urlfilter",
-       website: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico"
+       websites: [ 
+              {
+                url: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico",
+                code: 403
+              }
+       ]
      },
      {
         title: "Block access to websites with spyware and adware content",
@@ -54,7 +69,12 @@ const config = [
         load : "Testing if the browser can reach a popular spyware website...",
         id: "block_spwyware",
         category: "urlfilter",
-        website: "https://counter.yadro.ru/id127/ddp-id.gif"
+        websites: [ 
+              {
+                url: "https://counter.yadro.ru/id127/ddp-id.gif",
+                code: 403
+              }
+       ]
      },
      {
         title: "Block malware files over HTTPs",
@@ -65,7 +85,12 @@ const config = [
         load : "Trying to download the eicar.com file over HTTPs...",
         id: "block_https_malware",
         category: "cinspect",
-        website: "https://secure.eicar.org/eicar.com"
+        websites: [ 
+              {
+                url: "https://secure.eicar.org/eicar.com",
+                code: 403
+              }
+       ]
      },
      {
         title: "Block malware files over HTTP",
@@ -76,7 +101,12 @@ const config = [
         load : "Trying to download the eicar.com file over HTTP...",
         id: "block_http_malware",
         category: "cinspect",
-        website: "http://www.rexswain.com/eicar2.zip"
+        websites: [ 
+              {
+                url: "http://www.rexswain.com/eicar2.zip",
+                code: 403
+              }
+       ]
      },
      {
         title: "Block malware downloads from well-known cloud providers",
@@ -87,7 +117,12 @@ const config = [
         load : "Trying to download the malware from AWS...",
         id: "block_cloud_malware",
         category: "cinspect",
-        website: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip"
+        websites: [ 
+              {
+                url: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip",
+                code: 403
+              }
+       ]
      },
      {
         title: "Block files who have been compromised by exploited",
@@ -98,8 +133,38 @@ const config = [
         load : "Trying to download the pdf file which is exploited...",
         id: "block_file_exploits",
         category: "cinspect",
-        website: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf"
-     }
+        websites: [ 
+              {
+                url: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf",
+                code: 403
+              }
+       ]
+     },
+     {
+        title: "Not allow searching Video's (example Vimeo)",
+        desc: "This test checks if searching videos on Vimeo get blocked and if other functionalities still work.",
+        detail: "Vimeo is one of the biggest plaform to share professional video for every device but as YouTube has a huge searchable video base which can motiviate procrastination. The VMware CWS Cloud Access Security Broker (CASB) can be used to allow employees to share companies video footage to Vimeo and in parallel deny browsing the content of Vimeo..",
+        how: "",
+        fail: "Users will be able to search and look for video's on Vimeo. With the right VMware CWS <strong>CASB</strong> configuration, this can be mitigated.",
+        load : "Trying to execute a search in Vimeo...",
+        id: "block_vimeo_search",
+        category: "casb",
+        websites: [
+            {
+                url: "https://vimeo.com/search?q=test", 
+                code: 403  
+            },
+            {
+                url: "https://vimeo.com/", 
+                code: 200 
+            },
+            {
+                url: "https://vimeo.com/473446147",
+                code: 200
+            }
+        ]
+     } 
+
 ];
 
 export { config, testing_domains};

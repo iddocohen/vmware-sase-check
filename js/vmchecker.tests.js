@@ -65,20 +65,25 @@ function Stats (oarr) {
 }
 
 
-async function doAjax(url, type="html") {
+async function doAjax(url, obj={type: undefined, request:undefined}) {
     let ret = [];
     let time;
+
+    let type     = obj.request || "GET";
+    let datatype = obj.type    || "html";
+
+
     try {
         // Putting everything in separte XHR to get a bit more information
         var xhr = new XMLHttpRequest();
         await $.ajax({
-            type: "GET",
+            type: type,
             beforeSend: function() {
                 time = new Timer();
             },
             url: url,
             cache: false,
-            dataType: type,
+            dataType: datatype,
             xhr: function () {
                 return xhr;
             },
@@ -145,7 +150,8 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     }
 
     async function getLocations () {
-        let data = await doAjax("https://iddocohen.github.io/vmware-sase-check/config/locations.json", "json");
+        //let data = await doAjax("https://iddocohen.github.io/vmware-sase-check/config/locations.json", "json");
+        let data = await doAjax("https://iddocohen.github.io/vmware-sase-check/config/locations.json", {type: "json"});
         if (data[1].status == 200) {
             return data[3].pops;
         }
@@ -233,29 +239,47 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     }   
 }    
 
-async function block_website(site) {
-    let [jqXHR, xhr, rtt, data] = await doAjax(site); 
+async function testing(sites) {
     let ret = [];
-    let classified = "";
-    if (xhr.status == 403) {
-        try {
-            if (jqXHR.responseText.includes("VMware Cloud Web Security")) {
-                let forbidden = $.parseHTML(jqXHR.responseText);
-                classified = $(forbidden).find("strong").text();
+    for (let i=0; i < sites.length; ++i) {
+        let url = sites[i].url;
+        let expected_code = sites[i].code;
+        let [jqXHR, xhr, rtt, data] = await doAjax(url); 
+        let classified = "";
+        let a = [];
+        if (xhr.status == 403) {
+            if (expected_code == xhr.status) {
+                try {
+                    if (jqXHR.responseText.includes("VMware Cloud Web Security")) {
+                        let forbidden = $.parseHTML(jqXHR.responseText);
+                        classified = $(forbidden).find("strong").text();
+                    }
+                    a.push(true);
+                } catch (e) {
+                    log (e);
+                    a.push(false);
+                } 
+            } else {
+                a.push(false);
             }
-        } catch (e) {
-            log (e);
-        } 
-        ret.push(classified);
-        ret.push(true);
-    } else if (xhr.status == 200) {
-        ret.push(classified);
-        ret.push(false);
-    } else {
-        ret.push(classified);
-        ret.push(undefined);
+        } else if (xhr.status == 200) {
+            if (expected_code == xhr.status) {
+                a.push(true);
+            } else {
+                a.push(false);
+            }
+        } else {
+            if (expected_code == xhr.status) {
+                ret.push(true);
+            } else {
+                a.push(undefined);
+            }
+        }
+        a.push(classified);
+        a.push(rtt);
+        a.push(url);
+        ret.push(a);
     }
-    ret.push(rtt);
     return ret;
 }
 
@@ -264,7 +288,7 @@ function lookup(id) {
     for (let i = 0; i < config.length; i++) {
         let o = config[i];
         if (o.id == id) {
-            return [o.how, o.fail, o.load, o.website];            
+            return [o.how, o.fail, o.load, o.websites];            
         }   
     }
     return false;
@@ -344,6 +368,8 @@ $(window).bind("load", function () {
             changeButton(this, "Blocked", "success");
         } else if (attr == 'unblocked') {
             changeButton(this, "Unblocked", "danger");
+        } else if (attr == 'blocked-differently') {
+            changeButton(this, "Blocked but...", "warning");
         } else if (attr == 'error') {
             changeButton(this, "Error", "danger");
         }
@@ -366,23 +392,38 @@ $(window).bind("load", function () {
             case "cws": 
                 checkCWS("#cws_process","#stats_mean","#stats_std","#stats_quantitle");    
                 break;
+            case "casb":
             case "urlfilter":
             case "cinspect":
-                let [how, fail, load, website] = lookup(id);
+                let [how, fail, load, websites] = lookup(id);
                 $(footer_text).text(load);
-                let func = block_website(website);
+                let func = testing(websites);
                 if (typeof func === "object") {
-                    Promise.resolve(func).then(function(value) {
-                        let [data, bool, rtt] = value;
+                    Promise.resolve(func).then(function(values) {
+                        let [bool, data, rtt, url] = values[0];
+                        if (values.length > 1) {
+                            for (let i=1 ; i < values.length; ++i) {
+                                let [check] = values[i];
+                                bool = bool && check; 
+                            }
+                        }
                         if (bool == true) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
                             $(footer_text).text(`Category identified by CWS as '${data}'. Response time was ${rtt}s`);
                         }else if (bool == false) {
-                            $(button).attr("data-tested","unblocked");
-                            changeButton(button, "Unblocked", "danger");
-                            $(body_text).html(fail);
-                            $(footer_text).text(`Response time was ${rtt}s`);
+                            // Main website got blocked but other parts have or haven't been blocked  
+                            if (values[0][0] && values.length > 1) {
+                                $(button).attr("data-tested","blocked-differently");
+                                changeButton(button, "Blocked but...", "warning");
+                                $(body_text).html(`Main check for '${url}' got blocked but other parts of domain got either blocked or returned unexpected HTTP return codes. Please double check the configuration.`);
+                                $(footer_text).text(`Category identified by CWS as '${data}'. Response time was ${rtt}s`);
+                            } else {
+                                $(button).attr("data-tested","unblocked");
+                                changeButton(button, "Unblocked", "danger");
+                                $(body_text).html(fail);
+                                $(footer_text).text(`Response time was ${rtt}s`);
+                            }
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
