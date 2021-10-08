@@ -410,25 +410,25 @@ $(window).bind("load", function () {
                         if (bool == true) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
-                            $(footer_text).text(`Category identified by CWS as '${data}'. Response time was ${rtt}s`);
+                            $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was ${rtt}s`);
                         }else if (bool == false) {
                             // Main website got blocked but other parts have or haven't been blocked  
                             if (values[0][0] && values.length > 1) {
                                 $(button).attr("data-tested","blocked-differently");
                                 changeButton(button, "Blocked but...", "warning");
                                 $(body_text).html(`Main check for '${url}' got blocked but other parts of domain got either blocked or returned unexpected HTTP return codes. Please double check the configuration.`);
-                                $(footer_text).text(`Category identified by CWS as '${data}'. Response time was ${rtt}s`);
+                                $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was ${rtt}s`);
                             } else {
                                 $(button).attr("data-tested","unblocked");
                                 changeButton(button, "Unblocked", "danger");
                                 $(body_text).html(fail);
-                                $(footer_text).text(`Response time was ${rtt}s`);
+                                $(footer_text).html(`Response time was ${rtt}s`);
                             }
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
                             $(body_text).html(fail);
-                            $(footer_text).text(`Response time was ${rtt}s`);
+                            $(footer_text).html(`Response time was ${rtt}s`);
                         }
                         progress(config.length, $(".btn-outline-success").length);
                     });
