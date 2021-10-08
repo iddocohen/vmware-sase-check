@@ -1,25 +1,328 @@
 {
-  "pops": [
-    { "ip": "216.221.24.0/23",  "pop":"San Jose"},
-    { "ip": "216.221.26.0/23",  "pop":"Chicago"},
-    { "ip": "216.221.28.0/23",  "pop":"Ashburn"},
-    { "ip": "216.221.30.0/23",  "pop":"Texas"},
-    { "ip": "136.144.96.0/23",  "pop":"Paris"},
-    { "ip": "136.144.98.0/23",  "pop":"London"}, 
-    { "ip": "136.144.100.0/23", "pop":"London"},
-    { "ip": "136.144.102.0/23", "pop":"Frankfurt"},
-    { "ip": "103.48.252.0/23",  "pop":"Tokyo"},
-    { "ip": "103.48.254.0/23",  "pop":"Sydney"},
-    { "ip": "159.100.170.0/23", "pop":"Georgia"},
-    { "ip": "159.100.172.0/23", "pop":"Colorado"},
-    { "ip": "159.100.174.0/23", "pop":"Corona"},
-    { "ip": "64.186.24.0/23",   "pop":"Corona"},
-    { "ip": "64.186.26.0/23",   "pop":"Washington"},
-    { "ip": "136.144.104.0/23", "pop":"Italy"},
-    { "ip": "136.144.106.0/23", "pop":"Ireland"},
-    { "ip": "64.186.28.0/23",   "pop":"British Columbia"},
-    { "ip": "64.186.30.0/23",   "pop":"Ontario"},
-    { "ip": "207.66.112.0/23",  "pop":"Singapore"},
-    { "ip": "159.100.166.0/23", "pop":"San Jose"}
+    "pops": [
+        {
+            "ip": "74.217.48.0/24",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "74.201.54.0/23",
+            "pop": "Newbury Park",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "66.151.154.0/24",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "66.150.96.0/23",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "64.94.26.0/23",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "64.74.28.0/24",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "64.74.141.0/25",
+            "pop": "United States",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "207.66.112.0/23",
+            "pop": "Singapore",
+            "radius": 1000,
+            "country": "SG"
+        },
+        {
+            "ip": "159.100.160.0/28",
+            "pop": "Utah",
+            "radius": 1000,
+            "country": "US"
+        },
+        {
+            "ip": "216.221.30.0/23",
+            "pop": "Texas",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "216.221.28.0/23",
+            "pop": "Ashburn",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "216.221.26.0/23",
+            "pop": "Chicago",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "216.221.24.0/23",
+            "pop": "San Jose",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "192.40.64.0/26",
+            "pop": "Alameda",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.170.0/23",
+            "pop": "Georgia",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.170.0/23",
+            "pop": "Georgia",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.170.0/23",
+            "pop": "Georgia",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.167.0/24",
+            "pop": "California",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.166.0/24",
+            "pop": "San Jose",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.166.0/24",
+            "pop": "San Jose",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.165.0/24",
+            "pop": "Germany",
+            "radius": 500,
+            "country": "DE"
+        },
+        {
+            "ip": "159.100.164.0/28",
+            "pop": "Roslyn",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.163.0/24",
+            "pop": "Fort Lauderdale",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.162.0/24",
+            "pop": "Fort Lauderdale",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.161.0/28",
+            "pop": "Atlanta",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "104.193.31.0/26",
+            "pop": "West Linn",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "104.193.29.0/25",
+            "pop": "Grand Prairie",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "104.193.28.0/27",
+            "pop": "Akron",
+            "radius": 500,
+            "country": "US"
+        },
+        {
+            "ip": "64.186.30.0/23",
+            "pop": "Ontario",
+            "radius": 200,
+            "country": "CA"
+        },
+        {
+            "ip": "64.186.28.0/23",
+            "pop": "British Columbia",
+            "radius": 200,
+            "country": "CA"
+        },
+        {
+            "ip": "64.186.26.0/23",
+            "pop": "Washington",
+            "radius": 200,
+            "country": "US"
+        },
+        {
+            "ip": "64.186.24.0/23",
+            "pop": "East Setauket",
+            "radius": 200,
+            "country": "US"
+        },
+        {
+            "ip": "136.144.98.0/23",
+            "pop": "London",
+            "radius": 200,
+            "country": "GB"
+        },
+        {
+            "ip": "136.144.96.0/23",
+            "pop": "Paris",
+            "radius": 200,
+            "country": "FR"
+        },
+        {
+            "ip": "136.144.106.0/23",
+            "pop": "Ireland",
+            "radius": 200,
+            "country": "IE"
+        },
+        {
+            "ip": "136.144.104.0/23",
+            "pop": "Italy",
+            "radius": 200,
+            "country": "IT"
+        },
+        {
+            "ip": "136.144.102.0/23",
+            "pop": "Frankfurt am Main",
+            "radius": 200,
+            "country": "DE"
+        },
+        {
+            "ip": "136.144.100.0/23",
+            "pop": "London",
+            "radius": 200,
+            "country": "GB"
+        },
+        {
+            "ip": "104.193.30.0/26",
+            "pop": "Chicago",
+            "radius": 200,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.174.0/23",
+            "pop": "Phoenix",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.174.0/23",
+            "pop": "Phoenix",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.174.0/23",
+            "pop": "Phoenix",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.172.0/23",
+            "pop": "Colorado",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.172.0/23",
+            "pop": "Colorado",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.172.0/23",
+            "pop": "Colorado",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.169.0/24",
+            "pop": "Fullerton",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "159.100.168.0/27",
+            "pop": "Lynwood",
+            "radius": 100,
+            "country": "US"
+        },
+        {
+            "ip": "103.48.254.0/23",
+            "pop": "Sydney",
+            "radius": 20,
+            "country": "AU"
+        },
+        {
+            "ip": "103.48.254.0/23",
+            "pop": "Sydney",
+            "radius": 20,
+            "country": "AU"
+        },
+        {
+            "ip": "103.48.254.0/23",
+            "pop": "Sydney",
+            "radius": 20,
+            "country": "AU"
+        },
+        {
+            "ip": "103.48.252.0/23",
+            "pop": "Tokyo",
+            "radius": 20,
+            "country": "JP"
+        },
+        {
+            "ip": "103.48.252.0/23",
+            "pop": "Tokyo",
+            "radius": 20,
+            "country": "JP"
+        },
+        {
+            "ip": "103.48.252.0/23",
+            "pop": "Tokyo",
+            "radius": 20,
+            "country": "JP"
+        },
+        {
+            "ip": "103.48.252.0/23",
+            "pop": "Tokyo",
+            "radius": 20,
+            "country": "JP"
+        }
     ]
 }
