@@ -1,3 +1,12 @@
+/*
+ * VMware CWS Checker - Config File for Test Use-Cases
+ *
+ * Iddo Cohen, September 2021
+ *
+ * Copyright (C) 2021, Iddo Cohen
+ * SPDX-License-Identifier: MIT License
+ */
+
 const testing_domains = [
     "google.com",
     "youtube.com",
@@ -105,6 +114,10 @@ const config = [
               {
                 url: "http://www.rexswain.com/eicar2.zip",
                 code: 403
+              },
+              {
+                url: "http://www.rexswain.com/",
+                code: 200
               }
        ]
      },
@@ -121,6 +134,10 @@ const config = [
               {
                 url: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip",
                 code: 403
+              },
+               {
+                url: "https://security-scorecard.s3.us-east-2.amazonaws.com/",
+                code: 200
               }
        ]
      },
@@ -137,6 +154,10 @@ const config = [
               {
                 url: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf",
                 code: 403
+              },
+              {
+                url: "https://storage.googleapis.com/",
+                code: 400
               }
        ]
      },
@@ -144,7 +165,7 @@ const config = [
         title: "Not allow searching Video's (example Vimeo)",
         desc: "This test checks if searching videos on Vimeo get blocked and if other functionalities still work.",
         detail: "Vimeo is one of the biggest plaform to share professional video for every device but as YouTube has a huge searchable video base which can motiviate procrastination. The VMware CWS Cloud Access Security Broker (CASB) can be used to allow employees to share companies video footage to Vimeo and in parallel deny browsing the content of Vimeo..",
-        how: "",
+        how: "Under <strong>CASB</strong> in VMware CWS, use <strong>Add Rule</strong>, select <strong>All Users and Groups</strong> for source, select <strong>Vimeo</strong> under <strong>Custom Selection</strong>, choose <strong>Allow</strong> under <strong>Browser Action</strong> and choose <strong>Search</strong> to be <strong>Blocked</strong> only.",
         fail: "Users will be able to search and look for video's on Vimeo. With the right VMware CWS <strong>CASB</strong> configuration, this can be mitigated.",
         load : "Trying to execute a search in Vimeo...",
         id: "block_vimeo_search",

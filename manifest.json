@@ -4,6 +4,7 @@
   "description": "Auto test performance and security enforcements against VMware Cloud Web Security (CWS) offering.",
   "version": "0.21",
   "author": "Iddo Cohen",
+  "incognito":"split",
   "icons": { 
         "16": "icon/icon16-white.png",
         "48": "icon/icon48-white.png",

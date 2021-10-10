@@ -1,3 +1,16 @@
+/*
+ * VMware CWS Checker - Main File
+ *
+ * The VMware CWS Checker is a browser extension is a tool to test security for
+ * HTTP & HTTPs based traffic through VMware Cloud Web Security (CWS) offering.
+ * It tests CASB, URL filtering, Content Inspection and much more. 
+ *
+ * Iddo Cohen, August 2021
+ *
+ * Copyright (C) 2021, Iddo Cohen
+ * SPDX-License-Identifier: MIT License
+ */
+
 import {config, testing_domains} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
@@ -165,9 +178,9 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
         let ipify = await doAjax("http://api.ipify.org/");
         if (ipify[1].status == 200) {
             if (validateIPaddress(ipify[1].responseText)) {
-                 for (let i = 0; i < sase_ip_ranges.length; i++) {
+                 for (let i = 0; i < sase_ip_ranges.length; ++i) {
                     if (ipInRange(sase_ip_ranges[i].ip, ipify[1].responseText)) {
-                        return [true, ipify[1].responseText, sase_ip_ranges[i].pop];
+                        return [true, ipify[1].responseText, sase_ip_ranges[i].pop+"|"+sase_ip_ranges[i].radius];
                     }
                  } 
                  return [false, `You are <strong>partially</strong> behind CWS.`, 1];
@@ -182,11 +195,12 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 
     let [behindCWS, behindCWStext, behindCWSerror] = await testSourceIP();
     let geoCity = "";
+    let geoAccr = 0;
 
     if (behindCWS) {
         text ("You are behind CWS. Will test further...");
         //geoCity   = await getGeoCity(behindCWStext);
-        geoCity   = behindCWSerror;
+        [geoCity, geoAccr]  = behindCWSerror.split("|");
     } else {
         text ("The response received indicates you are not behind VMware CWS service. Double checking...");
     }
@@ -216,7 +230,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
 
                 if (behindCWS) {
-                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} in ${geoCity}.`);
+                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} which resides in ${geoCity} (± ${geoAccr}km).`, dom_process, "html");
                 } else {
                     displayMessage(behindCWSerror);
                     text (behindCWStext, dom_process, "html");
@@ -242,43 +256,27 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
 async function testing(sites) {
     let ret = [];
     for (let i=0; i < sites.length; ++i) {
-        let url = sites[i].url;
-        let expected_code = sites[i].code;
+        let url                     = sites[i].url;
+        let expected_code           = sites[i].code;
         let [jqXHR, xhr, rtt, data] = await doAjax(url); 
-        let classified = "";
-        let a = [];
-        if (xhr.status == 403) {
-            if (expected_code == xhr.status) {
+        let classified              = "";
+        let bool                    = false;
+        if (expected_code == xhr.status) {
+            if (xhr.status == 403) {
                 try {
                     if (jqXHR.responseText.includes("VMware Cloud Web Security")) {
                         let forbidden = $.parseHTML(jqXHR.responseText);
                         classified = $(forbidden).find("strong").text();
+                        bool = true;
                     }
-                    a.push(true);
                 } catch (e) {
                     log (e);
-                    a.push(false);
-                } 
+                }
             } else {
-                a.push(false);
-            }
-        } else if (xhr.status == 200) {
-            if (expected_code == xhr.status) {
-                a.push(true);
-            } else {
-                a.push(false);
-            }
-        } else {
-            if (expected_code == xhr.status) {
-                ret.push(true);
-            } else {
-                a.push(undefined);
-            }
+                bool = true;
+            } 
         }
-        a.push(classified);
-        a.push(rtt);
-        a.push(url);
-        ret.push(a);
+        ret.push([bool, classified, rtt, url, xhr.status]);
     }
     return ret;
 }
@@ -400,7 +398,7 @@ $(window).bind("load", function () {
                 let func = testing(websites);
                 if (typeof func === "object") {
                     Promise.resolve(func).then(function(values) {
-                        let [bool, data, rtt, url] = values[0];
+                        let [bool, data, rtt, url, code] = values[0];
                         if (values.length > 1) {
                             for (let i=1 ; i < values.length; ++i) {
                                 let [check] = values[i];
@@ -410,25 +408,26 @@ $(window).bind("load", function () {
                         if (bool == true) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
-                            $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was ${rtt}s`);
+                            $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
                         }else if (bool == false) {
-                            // Main website got blocked but other parts have or haven't been blocked  
+                            // Main website got blocked but other domain parts might have a wrong state, as it got blocked not like the test-case intended to.  
+                            //TODO: To be more specific on if other URLs really got blocked by CWS or by other security. 
                             if (values[0][0] && values.length > 1) {
                                 $(button).attr("data-tested","blocked-differently");
                                 changeButton(button, "Blocked but...", "warning");
-                                $(body_text).html(`Main check for '${url}' got blocked but other parts of domain got either blocked or returned unexpected HTTP return codes. Please double check the configuration.`);
-                                $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was ${rtt}s`);
+                                $(body_text).html(`Several URLs for given test-case are used for testing. The main URL '${url}' got blocked from CWS but the other URLs returned unexpected return HTTP code, which indicates a wrong configuration. Please double check the configuration.`);
+                                $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
                             } else {
                                 $(button).attr("data-tested","unblocked");
                                 changeButton(button, "Unblocked", "danger");
                                 $(body_text).html(fail);
-                                $(footer_text).html(`Response time was ${rtt}s`);
+                                $(footer_text).html(`Response time was <strong>${rtt}s</strong>`);
                             }
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
                             $(body_text).html(fail);
-                            $(footer_text).html(`Response time was ${rtt}s`);
+                            $(footer_text).html(`Response time was <strong>${rtt}s</strong>`);
                         }
                         progress(config.length, $(".btn-outline-success").length);
                     });
