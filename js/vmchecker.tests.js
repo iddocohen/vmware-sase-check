@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: MIT License
  */
 
-import {config, testingDomains, existingCategories} from './vmchecker.config.js';
+import {faqConfig, testConfig, testingDomains, existingCategories} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
 var error = console.error.bind(console);
@@ -284,8 +284,8 @@ async function doTesting(sites) {
 
 
 function lookup(id) {
-    for (let i = 0; i < config.length; i++) {
-        let o = config[i];
+    for (let i = 0; i < testConfig.length; i++) {
+        let o = testConfig[i];
         if (o.id == id) {
             return [o.how, o.fail, o.load, o.websites];            
         }   
@@ -314,19 +314,67 @@ function displayMessage(id, type="warning") {
     $('.alert').fadeIn();
     $('html, body').animate({ scrollTop: 0 }, 'fast');
 }
-$(function() {
-    $.getJSON("../manifest.json", function (data) { 
-        let version = `v${data.version}`;
-        let html = $(".navbar-brand").html();
-        if (version === "v0.1") {
-            version = "beta"
-        }
-        $(".navbar-brand").html(html+`<small><small><sub>(${version})</sub></small></small>`);   
-    });
- 
-});
 
-$(window).bind("load", function () {
+function createTestPage () {
+    let initHTML = `
+        <div class="alert" style="display: none" role="alert" id="inner-message">
+              <div class="d-flex align-items-center justify-content-between">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div id="alert_message"></div>
+                <button type="button" class="btn-close" aria-label="Close"></button>
+              </div>
+        </div>
+        <div class="row top30">
+          <div class="col">
+            <div class="card-header-custom d-md-flex align-items-center justify-content-between">
+                <h4 class="card-title">Check connectivity and performance</h4>
+            </div>
+            <div class="card-group">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h4 class="card-title" id="stats_mean">0 s</h4>
+                    <p class="card-text">(Average response time)</p>
+                  </div>
+                </div>
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h4 class="card-title" id="stats_std">0 s</h4>
+                    <p class="card-text">(Standard deviation from response times)</p>
+                  </div>
+                </div>
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h4 class="card-title" id="stats_quantitle">0 s</h4>
+                    <p class="card-text">(75% | 50% | 25% percentile from response times)</p>
+                  </div>
+                </div>
+            </div>
+            <div class="card-footer-custom d-md-flex align-items-center justify-content-between">
+                <p class="card-text" id="cws_process"></p>
+                <a href="#" class="btn btn-primary" data-category="cws" id="cws_check">Re-run</a>
+            </div>
+          </div>
+          <div class="col">
+             <div class="card invisible">
+                  <div class="card-body top4">
+                    <p class"card-text"><br></p>
+                  </div>
+              </div>
+              <div class="card">
+                  <div class="card-body">
+                    <p class"card-text">Successful tests:</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+                    </div>
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button class="btn btn-primary top15" type="button" id="test_all">Test All</button>
+                    </div>
+                  </div>
+              </div>
+          </div>
+        </div>
+    `
+    $(document.body).append(initHTML);
     for (let i = 0; i < existingCategories.length; ++i) {
         const o = existingCategories[i];
         if (!o.isEnabled) { continue };
@@ -342,8 +390,8 @@ $(window).bind("load", function () {
         `;
         $(document.body).append(div);
     } 
-    for (let i = 0; i < config.length; ++i){
-        const o = config[i];
+    for (let i = 0; i < testConfig.length; ++i){
+        const o = testConfig[i];
         const div = `
           <div class="col">
             <div class="card">
@@ -444,12 +492,72 @@ $(window).bind("load", function () {
                             $(bodyText).html(failMessage);
                             $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
                         }
-                        progressBar(config.length, $(".btn-outline-success").length);
+                        progressBar(testConfig.length, $(".btn-outline-success").length);
                     });
                 }
                 break;
         }
     });
     $('#cws_check').click();
+}
+
+function createFaqPage() {
+    let initHtml = `
+        <div class="row"><br><br></div>
+        <div class="container top30">
+            <div class="accordion" id="accordionPanels">
+            </div>
+        </div>
+    `;
+    $(document.body).append(initHtml);
+    for (let i=0; i < faqConfig.length; ++i) { 
+       let o = faqConfig[i];
+       if (!o.isEnabled) {continue;}
+       let div = `
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-heading${i}">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse${i}" aria-expanded="false" aria-controls="panelsStayOpen-collapse${i}">
+                 ${o.title}
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapse${i}" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-heading${i}">
+              <div class="accordion-body">
+                 ${o.detail}
+              </div>
+            </div>
+          </div>
+       `; 
+       $("#accordionPanels").append(div);
+    }
+}
+
+$(function() {
+    $.getJSON("../manifest.json", function (data) { 
+        let version = `v${data.version}`;
+        let html = $(".navbar-brand").html();
+        if (version === "v0.1") {
+            version = "beta"
+        }
+        $(".navbar-brand").html(html+`<small><small><sub>(${version})</sub></small></small>`);   
+    });
 });
 
+$(window).bind("load", function () {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const page = urlParams.get('page');
+    switch (page) {
+        case "main": 
+            createTestPage();
+            break;
+        case "faq":
+            createFaqPage();
+            break;
+        case "options":
+            //TODO: Options function
+            break;
+        default:
+            createTestPage();
+            break;
+    }
+});

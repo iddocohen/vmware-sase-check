@@ -27,7 +27,7 @@ const existingCategories = [
     { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false }
 ]
 
-const config = [
+const testConfig = [
      { 
        title: "Block acess to proxy avoidance and anonymizers websites",
        desc : "This test tries to connect to a proxy website and download their logo.",
@@ -96,7 +96,7 @@ const config = [
         title: "Block malware files over HTTPs",
         desc: "This test tries to download the well known EICAR file over HTTPS to check if it gets blocked.",
         detail: "The damages that an organization may experience as a victim of malware can be listed as, data breaches, illegal removal of balance from bank accounts and unauthorized access to valuable files/documents.",
-        how  : "If not already done so, enable the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "To protect your organisations from 0-day or known, malware, spyware and viruse files, VMware CWS <strong>Content Inspection</strong> can be used to identify and block theese automatically.",
         load : "Trying to download the eicar.com file over HTTPs...",
         id: "block_https_malware",
@@ -112,7 +112,7 @@ const config = [
         title: "Block malware files over HTTP",
         desc: "This test tries to download the well known EICAR file over HTTP to check if it gets blocked.",
         detail:"Malware is a very powerful software that is a threat to the corporate organizations. The easy targets of malware are the multinational organizations. Primarily, organizations will face huge complications and internal damages if they fall prey to malware virus.",
-        how  : "If not already done so, enable the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "To protect your organisations from 0-day or known, malware, spyware and viruse files, VMware CWS <strong>Content Inspection</strong> can be used to identify and block this automatically.",
         load : "Trying to download the eicar.com file over HTTP...",
         id: "block_http_malware",
@@ -132,7 +132,7 @@ const config = [
         title: "Block malware downloads from well-known cloud providers",
         desc: "This test attempts to download a malware from popular cloud application provider.",
         detail: "Netskope's new report in 2021 found that cloud storage apps account for more than 66% of cloud malware delivery. Cybercriminals deliver malware through cloud apps to bypass and take advantage of any app-specific allow lists.",
-        how  : "If not already done so, enable the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "Organisations can become a potential big target and may face huge losses if, they do not take any effective to block malware from any kind of destination. VMware CWS can help with <strong>Content Inspection</strong> to reduce that risk.",
         load : "Trying to download the malware from AWS...",
         id: "block_cloud_malware",
@@ -152,7 +152,7 @@ const config = [
         title: "Block files who have been compromised by exploited",
         desc: "This test checks if you are protected from known file-based exploits.",
         detail: "Exploitation activity is a race against the clock for all parties involved. Attackers are attempting to exploit vulnerabilities before vendors have an opportunity to patch them and to continue exploiting them before the consumer patches them.",
-        how  : "If not already done so, enable the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "Most exploits are attempting to create a backdoor in infected devices that paves the way for additional malware. With VMware CWS <strong>Content Inspection</strong> this zero-day exploits and well-know exploits can be detected and mitigated.",
         load : "Trying to download the pdf file which is exploited...",
         id: "block_file_exploits",
@@ -195,4 +195,75 @@ const config = [
 
 ];
 
-export { config, testingDomains, existingCategories};
+const faqConfig = [
+    {
+        title: "How can I contribute?",
+        detail: "Feel free to fork the code and enhance it, test the extension and provide feedback or just give me a star in GitHub - all mechansims help to improve the extension or my motivation &#128521;",
+        isEnabled: true
+    },
+    {
+        title: "What are the prerequisites to successfully test the tests in the extension?",
+        detail: `
+            As a minimum recommended:<br><br>
+            <ul>
+                <li>To download and install the <strong>SSL Certification</strong>, so VMware CWS can inspect download/upload traffic.</li>
+                <li>Ensure all domains in <code>js/vmchecker.config.js</code> under the variable <code>testing_domains</code> are going through VMware CWS.</li>
+                <li>Allow <strong>*.github.com</strong>, <strong>*.github.io</strong> and <strong>api.ipify.org</strong> to reach the internet.</li>
+            </ul>
+            <br>
+            Rather then be specific on which HTTP/HTTPs traffic should or should not go through VMware CWS, I would recommend to send all traffic to VMware CWS for the duration of the testing.
+
+        `,
+        isEnabled: true
+    },
+    {
+        title: "How does 'check connectivity and performance' work?",
+        detail: `
+            For <strong>connectivity</strong>:<br><br>
+                <ul>
+                    <li>It checks first your external IP. This done by calling <strong>http://api.ipify.org/</strong> API.</li>
+                    <li>Checking if the IP is within a VMware SASE POP definition</li>
+                    <li>Tries to reach <strong>https://safe-cws-sase.vmware.com</strong> to double confirm that one is behind CWS</li>
+                </ul>
+            After confirming the above, it will do a <strong>performance</strong> test:<br><br>
+                <ul>
+                    <li> It will use the domains defined in the file <code>js/vmchecker.config.js</code> within the variable name <code>testing_domains</code>.</li>
+                    <li> It will calculate the response time of each and calculate the total average, std and percentitle statistics.</li>
+                </ul>
+            <br>
+            One can alter the <code>test_domains</code> variable to include or exclude domains for testing. Please only note, adding more domains, will cause more load to your browser.
+        `,
+        isEnabled: true
+    },
+    {
+        title: "Are the test performed harmful for my PC?",
+        detail: "<strong>No</strong>, the extension uses a simple HTTP GET to evaluate the received response form it.",
+        isEnabled: true
+    },
+    {
+        title: "What does 'Blocked', 'Blocked but...', 'Unblocked or 'Error'  mean after test has been executed?",
+        detail: `If test has a state:<br><br>
+            <ul>
+                <li><strong>Blocked</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS, meaning it got blocked. It double checks that 403 has sent the message.</li>
+                <li><strong>Blocked but...</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS for the main url test-case; however, other urls in the test-case received a different HTTP code as expected. For example, the Vimeo test-case under CASB tries to test of if search is getting blocked and if other parts of Vimeo are still working as expectged. If URL filtering is used to block Vimeo then all the urls will not get blocked, which means, yes searching got blocked but everything else as well - which is not what was expected.</li>
+                <li><strong>Unblocked</strong> it means the extension received HTTP 200 (OK). Either configuration was not applied correct or the content bypassed CWS.</li>
+                <li><strong>Error</strong> it means any other response status which is not 403 or 200 has been received. This could be caused by many factors, e.g. the testing site is unreachable (404) or another security enforcement has protected one. Please try again later and if it occurs again please fill in a ticket.</li>
+            </ul>
+        `,
+        isEnabled: true
+    },
+    {
+        title: "Can I change the test URLs used?",
+        detail: "<strong>Yes</strong>, one can edit the <code>js/vmchecker.config.js</code> to not only alter the URLs but add/delete tests. In the future, I will add a option page to the extension to be able to alter URLs accordingly.",
+        isEnabled: true
+
+    },
+    {
+        title: "Why is there no phishing test case?",
+        detail: "Today the majority of browsers are blocking websites which are considered phishing. As soon as the extension tries to reach such websites, the browser will block it accordingly and display a warning to the user. As such, there is no means for the extension to test VMware CWS configuration. However, one can test it manually by <a href='https://www.phishtank.com/phish_search.php?valid=y&active=y&Search=Search' class='link-primary' target='_blank' rel='noopener'>visting PhishTank</a> and select a website to test from. <strong>CAUTION: This websites can potentially be harmful</strong>",
+        isEnabled: true
+
+    },
+
+]
+export { faqConfig, testConfig, testingDomains, existingCategories};
