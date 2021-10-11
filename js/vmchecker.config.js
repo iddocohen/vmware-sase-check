@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT License
  */
 
-const testing_domains = [
+const testingDomains = [
     "google.com",
     "youtube.com",
     "facebook.com",
@@ -19,6 +19,13 @@ const testing_domains = [
     "github.com",
     "amazon.com"
 ];
+
+const existingCategories = [
+    { id: "casb",       humanReadable: "Cloud Access Security Broker (CASB)", isEnabled: true },
+    { id: "urlfilter",  humanReadable: "URL Fitlering",                       isEnabled: true},
+    { id: "cinspect",   humanReadable: "Content Inspection",                  isEnabled: true },
+    { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false }
+]
 
 const config = [
      { 
@@ -188,4 +195,4 @@ const config = [
 
 ];
 
-export { config, testing_domains};
+export { config, testingDomains, existingCategories};

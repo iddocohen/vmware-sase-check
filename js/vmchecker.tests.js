@@ -11,7 +11,7 @@
  * SPDX-License-Identifier: MIT License
  */
 
-import {config, testing_domains} from './vmchecker.config.js';
+import {config, testingDomains, existingCategories} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
 var error = console.error.bind(console);
@@ -210,10 +210,11 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     if (xhr.status == 200) {
          if (xhr.responseURL.includes('safe-cws-sase.vmware.com')) { // We double check that we get a response via CWS
             let deferreds = [];
-            for (let i = 0; i < testing_domains.length; i++) {
-                let new_proxy_url = "https://"+testing_domains[i];
-                deferreds.push(doAjax(new_proxy_url));
+            for (let i = 0; i < testingDomains.length; i++) {
+                let newProxyUrl = "https://"+testingDomains[i];
+                deferreds.push(doAjax(newProxyUrl));
             }
+            //TODO: Better variable names
             $.when.apply($, deferreds).done(function(){
                 let rtt_arr = [];
                 for (let i = 0; i < arguments.length; i++){
@@ -326,10 +327,24 @@ $(function() {
 });
 
 $(window).bind("load", function () {
+    for (let i = 0; i < existingCategories.length; ++i) {
+        const o = existingCategories[i];
+        if (!o.isEnabled) { continue };
 
-    for (let i = 0; i < config.length; i++){
-        let o = config[i];
-        let div = `
+        const div = `
+            <div class="row top30">
+                <div class="card">
+                    <div class="card-header text-white bg-secondary"><h4>${o.humanReadable}</h4></div>
+                </div>
+            </div>
+            <div class="row row-cols-1 row-cols-md-2 g-4 top15" id="checks_content_${o.id}">
+            </div>
+        `;
+        $(document.body).append(div);
+    } 
+    for (let i = 0; i < config.length; ++i){
+        const o = config[i];
+        const div = `
           <div class="col">
             <div class="card">
               <div class="card-header">
