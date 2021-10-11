@@ -253,7 +253,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     }   
 }    
 
-async function testing(sites) {
+async function doTesting(sites) {
     let ret = [];
     for (let i=0; i < sites.length; ++i) {
         let url                     = sites[i].url;
@@ -292,7 +292,7 @@ function lookup(id) {
     return false;
 }
 
-function progress(sum, count){
+function progressBar(sum, count){
     let num = round((count / sum) * 100);
     $(".progress-bar").css("width", num+"%");
     $(".progress-bar").attr("aria-valuenow", num);
@@ -305,9 +305,9 @@ function changeButton(object, text, css="primary") {
 }
 
 function displayMessage(id, type="warning") {
-    let url  = `https://iddocohen.github.io/vmware-sase-check`;
-    let path = `${url}/errors/${id}.html`;
-    let str  = `Warning: Please visit <a class="alert-link" target="_blank" rel="noopener noreferrer" href="${path}">#${id}</a> to get more info.`;
+    const url  = `https://iddocohen.github.io/vmware-sase-check`;
+    const path = `${url}/errors/${id}.html`;
+    const str  = `Warning: Please visit <a class="alert-link" target="_blank" rel="noopener noreferrer" href="${path}">#${id}</a> to get more info.`;
     $('#alert_message').html(str);
     $('.alert').attr('class', '').addClass(`alert alert-${type}`);
     $('.alert').fadeIn();
@@ -315,7 +315,7 @@ function displayMessage(id, type="warning") {
 }
 $(function() {
     $.getJSON("../manifest.json", function (data) { 
-        let version = "v"+data.version;
+        let version = `v${data.version}`;
         let html = $(".navbar-brand").html();
         if (version === "v0.1") {
             version = "beta"
@@ -376,8 +376,8 @@ $(window).bind("load", function () {
         let id          = $(this).attr('id');
         let category    = $(this).attr('data-category');
         let button      = $("#"+id);
-        let footer_text = $("#"+id+"_footer_text");
-        let body_text   = $("#"+id+"_body_text");
+        let footerText  = $("#"+id+"_footer_text");
+        let bodyText    = $("#"+id+"_body_text");
 
         if (id == "test_all") {
             $('button[data-type="test"]').click();
@@ -393,43 +393,43 @@ $(window).bind("load", function () {
             case "casb":
             case "urlfilter":
             case "cinspect":
-                let [how, fail, load, websites] = lookup(id);
-                $(footer_text).text(load);
-                let func = testing(websites);
-                if (typeof func === "object") {
-                    Promise.resolve(func).then(function(values) {
-                        let [bool, data, rtt, url, code] = values[0];
-                        if (values.length > 1) {
-                            for (let i=1 ; i < values.length; ++i) {
-                                let [check] = values[i];
-                                bool = bool && check; 
+                let [howMessage, failMessage, loadMessage, listWebsites] = lookup(id);
+                $(footerText).text(loadMessage);
+                let asyncFunc = doTesting(listWebsites);
+                if (typeof asyncFunc === "object") {
+                    Promise.resolve(asyncFunc).then(function(returnValues) {
+                        let [isBlocked, data, rtt, url, code] = returnValues[0];
+                        if (returnValues.length > 1) {
+                            for (let i=1 ; i < returnValues.length; ++i) {
+                                let [isOtherBlocked] = returnValues[i];
+                                isBlocked = isBlocked && isOtherBlocked; 
                             }
                         }
-                        if (bool == true) {
+                        if (isBlocked == true) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
-                            $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
-                        }else if (bool == false) {
+                            $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
+                        }else if (isBlocked == false) {
                             // Main website got blocked but other domain parts might have a wrong state, as it got blocked not like the test-case intended to.  
                             //TODO: To be more specific on if other URLs really got blocked by CWS or by other security. 
-                            if (values[0][0] && values.length > 1) {
+                            if (returnValues[0][0] && returnValues.length > 1) {
                                 $(button).attr("data-tested","blocked-differently");
                                 changeButton(button, "Blocked but...", "warning");
-                                $(body_text).html(`Several URLs for given test-case are used for testing. The main URL '${url}' got blocked from CWS but the other URLs returned unexpected return HTTP code, which indicates a wrong configuration. Please double check the configuration.`);
-                                $(footer_text).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
+                                $(bodyText).html(`Several URLs for given test-case are used for testing. The main URL '${url}' got blocked from CWS but the other URLs returned unexpected return HTTP code, which indicates a wrong configuration. Please double check the configuration.`);
+                                $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
                             } else {
                                 $(button).attr("data-tested","unblocked");
                                 changeButton(button, "Unblocked", "danger");
-                                $(body_text).html(fail);
-                                $(footer_text).html(`Response time was <strong>${rtt}s</strong>`);
+                                $(bodyText).html(failMessage);
+                                $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
                             }
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
-                            $(body_text).html(fail);
-                            $(footer_text).html(`Response time was <strong>${rtt}s</strong>`);
+                            $(bodyText).html(failMessage);
+                            $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
                         }
-                        progress(config.length, $(".btn-outline-success").length);
+                        progressBar(config.length, $(".btn-outline-success").length);
                     });
                 }
                 break;
