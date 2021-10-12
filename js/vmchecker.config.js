@@ -1,5 +1,5 @@
 /*
- * VMware CWS Checker - Config File for Test Use-Cases
+ * VMware CWS Checker - Config File for the Extension
  *
  * Iddo Cohen, September 2021
  *
@@ -7,7 +7,7 @@
  * SPDX-License-Identifier: MIT License
  */
 
-const testingDomains = [
+const defaultTestingDomains = [
     "google.com",
     "youtube.com",
     "facebook.com",
@@ -22,12 +22,12 @@ const testingDomains = [
 
 const existingCategories = [
     { id: "casb",       humanReadable: "Cloud Access Security Broker (CASB)", isEnabled: true },
+    { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false },
     { id: "urlfilter",  humanReadable: "URL Fitlering",                       isEnabled: true},
     { id: "cinspect",   humanReadable: "Content Inspection",                  isEnabled: true },
-    { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false }
 ]
 
-const testConfig = [
+const defaultTestConfig = [
      { 
        title: "Block acess to proxy avoidance and anonymizers websites",
        desc : "This test tries to connect to a proxy website and download their logo.",
@@ -266,4 +266,74 @@ const faqConfig = [
     },
 
 ]
-export { faqConfig, testConfig, testingDomains, existingCategories};
+
+const apis = [
+  'alarms',
+  'bookmarks',
+  'browserAction',
+  'commands',
+  'contextMenus',
+  'cookies',
+  'downloads',
+  'events',
+  'extension',
+  'extensionTypes',
+  'history',
+  'i18n',
+  'idle',
+  'notifications',
+  'pageAction',
+  'runtime',
+  'storage',
+  'tabs',
+  'webNavigation',
+  'webRequest',
+  'windows',
+]
+
+function Extension () {
+  const _this = this;
+
+  apis.forEach(function (api) {
+
+    _this[api] = null;
+
+    try {
+      if (chrome[api]) {
+        _this[api] = chrome[api];
+      }
+    } catch (e) {}
+
+    try {
+      if (window[api]) {
+        _this[api] = window[api];
+      }
+    } catch (e) {}
+
+    try {
+      if (browser[api]) {
+        _this[api] = browser[api];
+      }
+    } catch (e) {}
+    try {
+      _this.api = browser.extension[api];
+    } catch (e) {}
+  })
+
+  try {
+    if (browser && browser.runtime) {
+      this.runtime = browser.runtime;
+    }
+  } catch (e) {}
+
+  try {
+    if (browser && browser.browserAction) {
+      this.browserAction = browser.browserAction;
+    }
+  } catch (e) {}
+
+}
+
+let ext = new Extension();
+
+export { ext, faqConfig, defaultTestConfig, defaultTestingDomains, existingCategories};

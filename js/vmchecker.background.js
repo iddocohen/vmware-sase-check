@@ -1,71 +1,13 @@
-const apis = [
-  'alarms',
-  'bookmarks',
-  'browserAction',
-  'commands',
-  'contextMenus',
-  'cookies',
-  'downloads',
-  'events',
-  'extension',
-  'extensionTypes',
-  'history',
-  'i18n',
-  'idle',
-  'notifications',
-  'pageAction',
-  'runtime',
-  'storage',
-  'tabs',
-  'webNavigation',
-  'webRequest',
-  'windows',
-]
+/*
+ * VMware CWS Checker - Background Script
+ *
+ * Iddo Cohen, October 2021
+ *
+ * Copyright (C) 2021, Iddo Cohen
+ * SPDX-License-Identifier: MIT License
+ */
 
-function Extension () {
-  const _this = this
-
-  apis.forEach(function (api) {
-
-    _this[api] = null
-
-    try {
-      if (chrome[api]) {
-        _this[api] = chrome[api]
-      }
-    } catch (e) {}
-
-    try {
-      if (window[api]) {
-        _this[api] = window[api]
-      }
-    } catch (e) {}
-
-    try {
-      if (browser[api]) {
-        _this[api] = browser[api]
-      }
-    } catch (e) {}
-    try {
-      _this.api = browser.extension[api]
-    } catch (e) {}
-  })
-
-  try {
-    if (browser && browser.runtime) {
-      this.runtime = browser.runtime
-    }
-  } catch (e) {}
-
-  try {
-    if (browser && browser.browserAction) {
-      this.browserAction = browser.browserAction
-    }
-  } catch (e) {}
-
-}
-
-let ext = new Extension();
+import {ext} from './vmchecker.config.js';
 
 ext.browserAction.onClicked.addListener(function(tab) {
     ext.tabs.create({ url: ext.runtime.getURL('vmchecker.tests.html')});

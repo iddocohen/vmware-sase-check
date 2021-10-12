@@ -11,11 +11,13 @@
  * SPDX-License-Identifier: MIT License
  */
 
-import {faqConfig, testConfig, testingDomains, existingCategories} from './vmchecker.config.js';
+import {ext, faqConfig, defaultTestConfig, defaultTestingDomains, existingCategories} from './vmchecker.config.js';
 
 var log = console.log.bind(console);
 var error = console.error.bind(console);
 
+var testingDomains = [];
+var testConfig = [];
 
 // Simple Rouding function.
 function round(number, precision) {
@@ -531,9 +533,144 @@ function createFaqPage() {
     }
 }
 
+
+
+function createOptionsPage() {
+    function anInput(text) {
+        const div = `
+           <div class="w-25 col-12 input-group">
+                <span class="input-group-text">https://</span>
+                <input type="text" class="form-control" aria-describedby="basic-addon3" value="${text}">
+            </div>
+        `;
+        return div;
+    } 
+    function createListTestingDomains() {
+        let returnValue = "";
+        for (let i=0; i <= testingDomains.length; ++i) {
+            let o = testingDomains[i];
+            if (o === undefined) {
+                o = "";
+            } 
+            const div = anInput(o);
+            returnValue += div;
+        } 
+        return returnValue;
+    }
+
+    const initHtml = `
+        <div class="row"><br><br></div>
+        <div class="container top30">
+           <legend>Configure Domains which Performance are Tested Against</legend>
+           <div class="row g-3" id="testingDomains"></div>
+           <div id="testConfig"></div>
+        </div>
+    `; 
+    $(document.body).append(initHtml);
+
+    const div = createListTestingDomains();
+    $("#testingDomains").append(div);
+
+    const divButtons = `
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                <button type="button" class="btn btn-primary" id='testingDomainsSubmit'>Save Configuration</button>
+                <button type="button" class="btn btn-primary" id='testingDomainsAdd'>Add Input</button>
+            </div>
+    `;
+    $("#testingDomains").append(divButtons);
+
+    $('#testingDomainsSubmit').on('click', async function() {
+        const newTestingDomains = $('#testingDomains input').map(function(){
+            //TODO: Implement URL checker to see if user is really inputing URLs. 
+            if ($(this).val() !== ""){
+                return $(this).val();
+            }
+        }).get();
+        await setStorageData({testingDomains:newTestingDomains});
+        displayPage("options"); 
+    });
+    
+    $('#testingDomainsAdd').on('click', function() {
+        // Getting all inputs under testingDomains and then get last parent. Reason, getting div's will mean I get the buttons as well, which I do not want.
+        $('#testingDomains input').last().parent().after(anInput(""));       
+    }); 
+}
+
+async function displayPage(page) {
+    $('nav').nextAll().remove();
+    switch (page) {
+        case "faq":
+            createFaqPage();
+            break;
+        case "options":
+            await setConfig();
+            createOptionsPage();
+            break;
+        default:
+            await setConfig();
+            createTestPage();
+            break;
+    }
+}
+
+const getStorageData = key =>
+  new Promise((resolve, reject) =>
+    ext.storage.local.get(key, result =>
+      ext.runtime.lastError
+        ? reject(Error(ext.runtime.lastError.message))
+        : resolve(result)
+    )
+  )
+
+const setStorageData = data =>
+  new Promise((resolve, reject) =>
+    ext.storage.local.set(data, () =>
+      ext.runtime.lastError
+        ? reject(Error(ext.runtime.lastError.message))
+        : resolve()
+    )
+  )
+
+const clearStorageData = key =>
+  new Promise((resolve, reject) =>
+    ext.storage.local.clear(() =>
+      ext.runtime.lastError
+        ? reject(Error(ext.runtime.lastError.message))
+        : resolve()
+    )
+  )
+
+
+async function setConfig() {
+    //await clearStorageData();
+    //ext.storage.local.getBytesInUse( log);
+    
+    let stored = await getStorageData('testingDomains');
+
+    if (Object.keys(stored).length === 0) {
+        setStorageData({testingDomains: defaultTestingDomains});
+        testingDomains = defaultTestingDomains;
+        log("Stored testingDomains default");
+    } else {
+        testingDomains = [...stored['testingDomains']];
+        log("Retrieved testingDomains");
+    }
+
+    stored = await getStorageData('testConfig');
+
+    if (Object.keys(stored).length === 0) {
+        setStorageData({testConfig: defaultTestConfig});
+        testConfig = defaultTestConfig;
+        log("Stored testConfig default");
+    } else {
+        testConfig = [...stored['testConfig']];
+        log("Retrieved testingConfig");
+    }
+}
+
 $(function() {
     $.getJSON("../manifest.json", function (data) { 
-        let version = `v${data.version}`;
+        const version = `v${data.version}`;
         let html = $(".navbar-brand").html();
         if (version === "v0.1") {
             version = "beta"
@@ -546,18 +683,11 @@ $(window).bind("load", function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const page = urlParams.get('page');
-    switch (page) {
-        case "main": 
-            createTestPage();
-            break;
-        case "faq":
-            createFaqPage();
-            break;
-        case "options":
-            //TODO: Options function
-            break;
-        default:
-            createTestPage();
-            break;
-    }
+    displayPage(page);
+    $('.nav-link').on('click', function() {
+        const linkClicked = $(this);
+        if (!linkClicked.prop('href').includes('#')) { return 0 }; 
+        const page = linkClicked.text().toLowerCase();
+        displayPage(page);
+    });
 });

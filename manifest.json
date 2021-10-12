@@ -15,11 +15,12 @@
   },
   "permissions": [
     "tabs",
+    "storage",
     "http://*/*",
     "https://*/*"
   ],
   "background": {
-    "scripts": ["js/vmchecker.background.js"],
-   "persistent": false
+    "page": "vmchecker.background.html",
+    "persistent": false
   }
 }
