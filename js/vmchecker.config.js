@@ -23,13 +23,13 @@ const defaultTestingDomains = [
 const existingCategories = [
     { id: "casb",       humanReadable: "Cloud Access Security Broker (CASB)", isEnabled: true },
     { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false },
-    { id: "urlfilter",  humanReadable: "URL Fitlering",                       isEnabled: true},
+    { id: "urlfilter",  humanReadable: "URL Filtering",                       isEnabled: true},
     { id: "cinspect",   humanReadable: "Content Inspection",                  isEnabled: true },
 ]
 
 const defaultTestConfig = [
      { 
-       title: "Block acess to proxy avoidance and anonymizers websites",
+       title: "Block access to proxy avoidance and anonymizers websites",
        desc : "This test tries to connect to a proxy website and download their logo.",
        detail: "Employees often try to bypass company policy by using anonymization/proxy websites that allow them to visit blacklisted websites, view pornography, or access restricted content.",
        how  : "In order to properly enforce company policy, you should configure your security solution to identify and restrict access to anonymizing websites. This can be archived with VMware CWS by selecting <strong>Proxy Avoidance and Anonymous</strong> under the <strong>Web Category</strong> when configuring a new policy under <strong>URL Filtering</strong>.",
@@ -37,6 +37,9 @@ const defaultTestConfig = [
        load : "Testing your ability to access anonymizing or proxy websites...",
        id: "block_proxy",
        category: "urlfilter",
+       version: 1,
+       property: "system",
+       isEnabled: true,
        websites: [ 
               {
                 url: "https://www.proxysite.com/assets/images/logo.png",
@@ -53,6 +56,9 @@ const defaultTestConfig = [
        load : "Testing your ability to download the image from the gambling website...",
        id: "block_gambling",
        category: "urlfilter",
+       version: 1,
+       property: "system",
+       isEnabled: true,
        websites: [ 
               {
                 url: "https://www.bet365.com/sports-assets/sports/FooterModule/assets/bet365-logo.svg",
@@ -69,6 +75,9 @@ const defaultTestConfig = [
        load : "Testing for your ability to access adult websites...",
        id: "block_adult",
        category: "urlfilter",
+       version: 1,
+       property: "system",
+       isEnabled: true,
        websites: [ 
               {
                 url: "https://static-hw.xvideos.com/v3/img/skins/default/favicon.ico",
@@ -85,6 +94,9 @@ const defaultTestConfig = [
         load : "Testing if the browser can reach a popular spyware website...",
         id: "block_spwyware",
         category: "urlfilter",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [ 
               {
                 url: "https://counter.yadro.ru/id127/ddp-id.gif",
@@ -101,6 +113,9 @@ const defaultTestConfig = [
         load : "Trying to download the eicar.com file over HTTPs...",
         id: "block_https_malware",
         category: "cinspect",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [ 
               {
                 url: "https://secure.eicar.org/eicar.com",
@@ -117,6 +132,9 @@ const defaultTestConfig = [
         load : "Trying to download the eicar.com file over HTTP...",
         id: "block_http_malware",
         category: "cinspect",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [ 
               {
                 url: "http://www.rexswain.com/eicar2.zip",
@@ -137,6 +155,9 @@ const defaultTestConfig = [
         load : "Trying to download the malware from AWS...",
         id: "block_cloud_malware",
         category: "cinspect",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [ 
               {
                 url: "https://security-scorecard.s3.us-east-2.amazonaws.com/eicar_com.zip",
@@ -157,6 +178,9 @@ const defaultTestConfig = [
         load : "Trying to download the pdf file which is exploited...",
         id: "block_file_exploits",
         category: "cinspect",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [ 
               {
                 url: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf",
@@ -177,6 +201,9 @@ const defaultTestConfig = [
         load : "Trying to execute a search in Vimeo...",
         id: "block_vimeo_search",
         category: "casb",
+        version: 1,
+        property: "system",
+        isEnabled: true,
         websites: [
             {
                 url: "https://vimeo.com/search?q=test", 
