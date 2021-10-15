@@ -579,16 +579,7 @@ function createOptionsPage() {
         `;
         return div; 
     }
-    function rowTest(dataObj, arrIndex) {
-        let testObj = dataObj;
-        if (testObj === undefined || testObj === null) {
-            testObj = {};
-            testObj['title'] = "";
-            testObj['category'] = "";
-            testObj['property'] = "user";
-            testObj['isEnabled'] = true;
-            testObj['websites'] = [];
-        }
+    function rowTest(testObj, arrIndex) {
         // Get object order back after storing it.  
         let objectOrder = {
             "title": null,
@@ -768,6 +759,8 @@ function createOptionsPage() {
         return returnValue;
 
     }
+
+    //TODO: Create a configuration clear button to rest all
 
     const initHtml = `
         <div class="row"><br><br></div>
@@ -959,6 +952,7 @@ function createOptionsPage() {
      });
      
      $('.btn').on('click', async function() {
+         //TODO: Refactor this code a bit better
          const length = $("#websites").find(".input-group").length; 
          if ($(this).attr('id') == "addWebsite") {
              $("#websites").append(aWebsite("websites","",length,"","",true));
