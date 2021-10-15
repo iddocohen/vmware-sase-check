@@ -554,16 +554,22 @@ function createOptionsPage() {
         `;
         return div;
     } 
-    function aWebsite(id, disabled, index=0, url="", code="") {
+    function aWebsite(id, disabled, index=0, url="", code="", span=false) {
+        
         if (url != "") {
             url = `value="${url}"`;
         }
         if (code != "") {
             code = `value="${code}"`;
         }
+        if (span){
+            span = `<span class="input-group-text w-25">URL and expected return code</span>`;
+        } else {
+            span = "";
+        }
         const div = `
             <div class="input-group mb-4">
-                <span class="input-group-text w-25">URL and expected code</span>
+                ${span}
                 <input type="text" class="form-control w-50" placeholder="https://example.com" aria-label="https://example.com" id="${id}_${index}_url" ${disabled} ${url}>
                 <input type="text" class="form-control" placeholder="403" aria-label="403" id="${id}_${index}_code" ${disabled} ${code}>
             </div>
@@ -594,7 +600,8 @@ function createOptionsPage() {
            let colDiv = '';
            //if (key != "title" && key != "category" && key != "websites" && key != "isEnabled") { return };
            const id = rowId+"_"+key;
-           const disabled = ((testObj.property == "system") ? "disabled" : "");
+           //const disabled = ((testObj.property == "system") ? "disabled" : "");
+           const disabled = "disabled";
            switch (key) {
                 case "websites": 
                     colDiv += `<div class="col-4" id="${id}">`;
@@ -628,14 +635,21 @@ function createOptionsPage() {
                 case "isEnabled":
                     const switchButton = ((testObj.isEnabled) ? "Disable": "Enable");
                     const colorButton = ((testObj.isEnabled) ? "success": "warning");
-                    colDiv += `
-                        <div class="col-2 form-check">
-                            <button type="button" class="btn btn-danger" id='${rowId}_delete' ${disabled}>Delete</button>
-                            <button type="button" class="btn btn-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
-                            <button type="button" class="btn btn-primary" id='${rowId}_addWebsite' ${disabled}>+</button>
-                            <button type="button" class="btn btn-primary" id='${rowId}_deleteWebsite' ${disabled}>-</button>
-                        </div>
-                        `;
+                    if (testObj.property != "system") { 
+                        colDiv += `
+                            <div class="col-2 form-check">
+                                <button type="button" class="btn btn-danger" id='${rowId}_delete'>Delete</button>
+                                <button type="button" class="btn btn-primary" id='${rowId}_edit'>Edit</button>
+                                <button type="button" class="btn btn-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                            </div>
+                            `;
+                    } else {
+                        colDiv += `
+                            <div class="col-2 form-check">
+                                <button type="button" class="btn btn-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                            </div>
+                            `;
+                    }
                     break;
            } 
            colDiv += '';
@@ -668,7 +682,7 @@ function createOptionsPage() {
             </div> 
             <div class='row'><br></div>
         `;
-        for (let i=0; i <= testConfig.length; ++i) {
+        for (let i=0 ; i < testConfig.length; ++i) {
             let o = testConfig[i];
             returnValue += rowTest(o,i);
         }
@@ -676,13 +690,92 @@ function createOptionsPage() {
         return returnValue;
     }
 
+    function createTestConfigForm(obj={id: undefined, title: undefined, detail:undefined, websites:undefined, category:undefined, isEnabled:undefined}) {
+        const category = obj.category || undefined; 
+        const id       = obj.id       || uuid();
+        const websites = obj.websites || [ {url: "", code: ""} ];
+        const detail   = obj.detail   || "";
+        const title    = obj.title    || "Block YouTube with CASB";
+        const isEnabled= obj.isEnabled|| false;
+
+        let options = "";
+        let first = false;
+        for (let i=0; i<existingCategories.length; ++i) {
+            const o = existingCategories[i];
+            if (!o.isEnabled) {continue};
+            let selected = "";
+            if (!category) {
+                if (!first){
+                    selected="selected";
+                    first = true;
+                } 
+            } else {
+                if (category == o.id) {
+                    selected="selected";
+                }
+            }
+            options += `<option value="${o.id}" ${selected}>${o.humanReadable}</option>`;
+        }
+    
+        let divWebsites = "";
+        for (let i=0; i<websites.length; ++i) {
+            divWebsites += aWebsite('websites', '',i, websites[i].url, websites[i].code, true);
+        }
+
+        const checked = ((isEnabled) ? "checked" : "");
+
+        let returnValue = `
+            <form class="needs-validation bottom30" id="${id}" novalidate>
+                <div class="row g-3">
+                    <div class="form-floating col-md-4">
+                        <input type="text" class="form-control" id="title" placeholder="Block Youtube with CASB" value="${title}" required>
+                        <label for="title">Title of the test-case</label>
+                        <div class="invalid-feedback">
+                            Please provide a title for your test-case. 
+                        </div> 
+                    </div>
+                    <div class="form-floating col-md-4">
+                        <select id="category" class="form-select">
+                            ${options}
+                        </select>
+                        <label for="category">Categories</label>    
+                    </div>
+                    <div class="form-check form-switch col-md-2">
+                        <input class="form-check-input" type="checkbox" id="isEnabled" ${checked}>
+                        <label class="form-check-label" for="isEnabled">Disable/Enable</label>
+                    </div>
+                </div>
+                <div class="row g-3 top5">
+                    <div class="form-floating col-md-12">
+                        <textarea class="form-control" placeholder="We trying to block YouTube functionality with CASB" id="detail" style="height: 100px" required>${detail}</textarea>
+                        <label for="description">Description of the test-case</label>    
+                        <div class="invalid-feedback">
+                            Please provide some description for your test-case.
+                        </div> 
+                    </div>
+                </div> 
+                <div class="row g-3 top5">
+                    <div class="form-floating col-md-12" id="websites">
+                        ${divWebsites}
+                    </div>
+                <div>
+           </form>
+                  
+        `;
+
+        return returnValue;
+
+    }
+
     const initHtml = `
         <div class="row"><br><br></div>
-        <div class="container-fluid top30">
+        <div class="container top30">
            <legend>Configure Domains which Performance are Tested Against</legend>
            <div class="row g-3" id="testingDomains"></div>
            <hr class="bg-danger border-4 border-top border-black">
-           <legend>Configure Test-Cases</legend>
+           <legend>Add/Edit Test-Cases</legend>
+           <div id="testConfigEdit"></div>
+           <legend>Current Test-Cases</legend>
            <div id="testConfig"></div>
         </div>
     `; 
@@ -715,102 +808,120 @@ function createOptionsPage() {
         $('#testingDomains input').last().parent().after(anInput(""));       
     }); 
 
+    $("#testConfigEdit").append(createTestConfigForm());
+    const buttonConfigEdit = `
+         <div class="row g-3 top5">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="button" class="btn btn-primary" id='testConfigSubmit'>Save Test-Case</button>
+                        <button type="button" class="btn btn-outline-primary" id='addWebsite'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
+                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
+                        </svg>
+                        Add additional URL
+                        </button>
+                        <button type="button" class="btn btn-outline-primary" id='deleteWebsite'>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                        </svg>
+                        Delete additional URL
+                        </button>
+                </div>
+           </div>
+        `;
+
+    $('#testConfigEdit').append(buttonConfigEdit);
+
     $("#testConfig").append(createListTestConfigs());
-    const buttonsTestConfig = `
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-primary" id='testConfigSubmit'>Save Test Configuration</button>
-            </div>
-    `;
-    
-    $("#testConfig").append(buttonsTestConfig);
 
     $('#testConfigSubmit').on('click', async function() {
-        let storedTestConfig = await getStorageData('testConfig');
-        storedTestConfig = storedTestConfig['testConfig'];
-        $('#testConfig input').each(function(index) {
-            let [property, arrIndex, testMethod, websiteIndex, websiteProperty] = $(this).attr('id').split("_");
-            if (arrIndex >= storedTestConfig.length){
-                storedTestConfig[arrIndex] = {};
-                storedTestConfig[arrIndex]["title"] = "";
-                storedTestConfig[arrIndex]["desc"] = "";
-                storedTestConfig[arrIndex]["detail"] = "";
-                storedTestConfig[arrIndex]["how"] = "";
-                storedTestConfig[arrIndex]["fail"] = "";
-                storedTestConfig[arrIndex]["load"] = "";
-                storedTestConfig[arrIndex]["id"] = uuid();
-                storedTestConfig[arrIndex]["category"] = "";
-                storedTestConfig[arrIndex]["version"] = 1;
-                storedTestConfig[arrIndex]["property"] = "user";
-                storedTestConfig[arrIndex]["isEnabled"] = true;
-                storedTestConfig[arrIndex]["websites"] = [];
+        let newTestConfig = [...testConfig];
+        
+        let found = false;
+
+        const id        = $("#testConfigEdit form").attr('id');
+        const title     = $("#title").val();
+        const detail    = $("#detail").val();
+        const category  = $("#category").val();
+        const isEnabled = $("#isEnabled").is(':checked');
+        let websites = [];
+        $("#websites input").each(function(index) {
+            let [_, arrIndex, type] = $(this).attr('id').split("_");
+            if (websites[arrIndex] === undefined) {
+                websites[arrIndex] = {};
             }
-            if (property != "system") {
-                if (testMethod != "websites") {
-                    storedTestConfig[arrIndex][testMethod] = $(this).val(); 
-                } else {
-                    if (storedTestConfig[arrIndex][testMethod][websiteIndex] === undefined) {
-                        storedTestConfig[arrIndex][testMethod][websiteIndex] = {};
-                    }
-                    if (websiteProperty == "code") {
-                        storedTestConfig[arrIndex][testMethod][websiteIndex][websiteProperty] = parseInt($(this).val(), 10);
-                    } else{
-                        storedTestConfig[arrIndex][testMethod][websiteIndex][websiteProperty] = $(this).val();
-                    }
-                }
-            }
-        });
-        $('#testConfig select').each(function(index) {
-            let [property, arrIndex, testMethod] = $(this).attr('id').split("_");
-            if (property != "system") {
-                const value = $(this).val() || "casb";
-                storedTestConfig[arrIndex][testMethod] = value;
-            }
-        });
-  
-        log(storedTestConfig);
-        await setStorageData({testConfig: storedTestConfig});
+            const typeValue = ((type == "code") ? parseInt($(this).val(), 10) : $(this).val());
+            websites[arrIndex][type] = typeValue;
+        }); 
+
+        let newObj = {
+                title: title,
+                desc: "",
+                detail: detail,
+                how: "",
+                fail: "",
+                load: "",
+                id: id,
+                category: category,
+                version: 1,
+                property: "user",
+                isEnabled: isEnabled,
+                websites: [...websites]
+        }
+        let foundIndex = -1;
+        for (let i=0; i < newTestConfig.length; ++i) {
+            let o = newTestConfig[i];
+            if (o.id == id) {
+                 foundIndex = i;
+                 break;
+            } 
+        }  
+    
+        if (foundIndex != -1) {
+            let o = newTestConfig[foundIndex];
+            o = Object.assign(o,newObj);
+            newTestConfig[foundIndex] = o;
+        } else {
+            newTestConfig.push(newObj);
+        }
+
+        await setStorageData({testConfig: newTestConfig});
         displayPage("options");
      });
      
      $('.btn').on('click', async function() {
-         let [property, arrIndex, action] = $(this).attr('id').split('_');
-         let storedTestConfig = [];
-         const websitesId = property+"_"+arrIndex+"_websites";
-         const length = $("#"+websitesId).find(".input-group").length; 
-         switch(action) {
-            case "delete": 
-                storedTestConfig = await getStorageData('testConfig');
-                storedTestConfig = storedTestConfig['testConfig'];
-                storedTestConfig.splice(arrIndex,1); 
-                await setStorageData({testConfig: storedTestConfig});
-                displayPage("options");
-                break;
-            case "switch":
-                storedTestConfig = await getStorageData('testConfig');
-                storedTestConfig = storedTestConfig['testConfig'];
-                const buttonText = $(this).text().trim();
-                if ( buttonText == "Disable") {
-                    storedTestConfig[arrIndex].isEnabled = false;
-                } else {
-                    storedTestConfig[arrIndex].isEnabled = true;
-                }
-                await setStorageData({testConfig: storedTestConfig});
-                displayPage("options");
-                break;
-            case "addWebsite":
-                const newId = websitesId;
-                $("#"+websitesId).append(aWebsite(newId,"",length));
-                break;
-            case "deleteWebsite":
-                if (length-1 > 0){
-                    storedTestConfig = await getStorageData('testConfig');
-                    storedTestConfig = storedTestConfig['testConfig'];
-                    $("#"+websitesId).children("div:last").remove();
-                    storedTestConfig[arrIndex].websites.splice(length-1,1);
-                    await setStorageData({testConfig: storedTestConfig});
-                    //displayPage("options");
-                }
-                break;
+         const length = $("#websites").find(".input-group").length; 
+         if ($(this).attr('id') == "addWebsite") {
+             $("#websites").append(aWebsite("websites","",length,"","",true));
+         } else if ($(this).attr('id') == "deleteWebsite") {
+             if (length-1 > 0){
+                $("#websites").children("div:last").remove();
+             }  
+         } else {
+             let [property, arrIndex, action] = $(this).attr('id').split('_');
+             const websitesId = property+"_"+arrIndex+"_websites";
+             switch(action) {
+                case "delete": 
+                    testConfig.splice(arrIndex,1);
+                    await setStorageData({testConfig: testConfig});
+                    displayPage("options");
+                    break;
+                case "switch":
+                    const buttonText = $(this).text().trim();
+                    if ( buttonText == "Disable") {
+                        testConfig[arrIndex].isEnabled = false;
+                    } else {
+                        testConfig[arrIndex].isEnabled = true;
+                    }
+                    await setStorageData({testConfig: testConfig});
+                    displayPage("options");
+                    break;
+                case "edit":
+                    $("#testConfigEdit form").remove();
+                    $(createTestConfigForm(testConfig[arrIndex])).insertBefore($("#testConfigSubmit").parent());
+                    break;
+             }
          }
      });
 }
