@@ -563,7 +563,7 @@ function createOptionsPage() {
             code = `value="${code}"`;
         }
         if (span){
-            span = `<span class="input-group-text w-25">URL and expected return code</span>`;
+            span = `<span class="input-group-text w-25">URL and expected http status code</span>`;
         } else {
             span = "";
         }
@@ -572,6 +572,9 @@ function createOptionsPage() {
                 ${span}
                 <input type="text" class="form-control w-50" placeholder="https://example.com" aria-label="https://example.com" id="${id}_${index}_url" ${disabled} ${url}>
                 <input type="text" class="form-control" placeholder="403" aria-label="403" id="${id}_${index}_code" ${disabled} ${code}>
+                <div class="invalid-feedback">
+                    Please provide a valid https:// or http:// url and http status code between 100-599.
+                </div> 
             </div>
         `;
         return div; 
@@ -675,9 +678,9 @@ function createOptionsPage() {
     function createListTestConfigs() {
         let returnValue = `
             <div class='row'>
-                <div class='col col-4'>Name of test</div>
-                <div class='col col-2'>Test categories</div>
-                <div class='col col-4'>URLs to test against with HTTP GET Method</div>
+                <div class='col col-4'>Title</div>
+                <div class='col col-2'>Category</div>
+                <div class='col col-4'>URL and http status code</div>
                 <div class='col col-2'>Action</div>
             </div> 
             <div class='row'><br></div>
@@ -691,12 +694,13 @@ function createOptionsPage() {
     }
 
     function createTestConfigForm(obj={id: undefined, title: undefined, detail:undefined, websites:undefined, category:undefined, isEnabled:undefined}) {
+        
         const category = obj.category || undefined; 
         const id       = obj.id       || uuid();
         const websites = obj.websites || [ {url: "", code: ""} ];
         const detail   = obj.detail   || "";
-        const title    = obj.title    || "Block YouTube with CASB";
-        const isEnabled= obj.isEnabled|| false;
+        const title    = obj.title    || "";
+        const isEnabled= obj.isEnabled|| true;
 
         let options = "";
         let first = false;
@@ -709,10 +713,8 @@ function createOptionsPage() {
                     selected="selected";
                     first = true;
                 } 
-            } else {
-                if (category == o.id) {
-                    selected="selected";
-                }
+            } else if (category == o.id) {
+                selected="selected";
             }
             options += `<option value="${o.id}" ${selected}>${o.humanReadable}</option>`;
         }
@@ -775,6 +777,7 @@ function createOptionsPage() {
            <hr class="bg-danger border-4 border-top border-black">
            <legend>Add/Edit Test-Cases</legend>
            <div id="testConfigEdit"></div>
+           <hr class="bg-danger border-4 border-top border-black">
            <legend>Current Test-Cases</legend>
            <div id="testConfig"></div>
         </div>
@@ -836,6 +839,26 @@ function createOptionsPage() {
     $("#testConfig").append(createListTestConfigs());
 
     $('#testConfigSubmit').on('click', async function() {
+
+        //https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url 
+        function validURL(str) {
+          var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+            '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+            '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+          return !!pattern.test(str);
+        }
+
+        function toggleValid(id, bool){
+            if (!bool) {
+                $("#"+id).removeClass("is-valid").addClass("is-invalid");
+            } else {
+                $("#"+id).removeClass("is-invalid").addClass("is-valid");
+            }
+        }
+             
         let newTestConfig = [...testConfig];
         
         let found = false;
@@ -845,6 +868,23 @@ function createOptionsPage() {
         const detail    = $("#detail").val();
         const category  = $("#category").val();
         const isEnabled = $("#isEnabled").is(':checked');
+
+        let error = false;
+
+        if (title.length == 0) {
+            toggleValid("title", false); 
+            error = true;
+        } else {
+            toggleValid("title", true); 
+        }
+
+        if (detail.length == 0) {
+            toggleValid("detail", false); 
+            error = true;
+        } else {
+            toggleValid("detail", true); 
+        }
+
         let websites = [];
         $("#websites input").each(function(index) {
             let [_, arrIndex, type] = $(this).attr('id').split("_");
@@ -852,8 +892,36 @@ function createOptionsPage() {
                 websites[arrIndex] = {};
             }
             const typeValue = ((type == "code") ? parseInt($(this).val(), 10) : $(this).val());
+            
             websites[arrIndex][type] = typeValue;
         }); 
+
+        for (let i=0; i<websites.length; ++i){
+            const urlIndex = "websites_"+i+"_url";
+            const codeIndex = "websites_"+i+"_code";
+            if (websites[i].url.length == 0) {
+                toggleValid(urlIndex, false); 
+                error = true;
+            } else if (!validURL(websites[i].url)){
+                toggleValid(urlIndex, false); 
+                error = true;
+            } else {
+                toggleValid(urlIndex, true); 
+            }
+            if (isNaN(websites[i].code)) {
+                toggleValid(codeIndex, false); 
+                error = true;
+            } else if (websites[i].code < 100 || websites[i].code >= 600) {
+                toggleValid(codeIndex, false); 
+                error = true;
+            } else {
+                toggleValid(codeIndex, true); 
+            }
+        }
+
+        if (error) {
+            return 0;
+        }
 
         let newObj = {
                 title: title,
