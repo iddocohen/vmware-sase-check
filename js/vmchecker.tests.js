@@ -480,11 +480,11 @@ function createTestPage () {
                                 isBlocked = isBlocked && isOtherBlocked; 
                             }
                         }
-                        if (isBlocked == true && code > 100) {
+                        if (isBlocked == true && code >= 100) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
                             $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
-                        }else if (isBlocked == false && code > 100) {
+                        }else if (isBlocked == false && code >= 100) {
                             // Main website got blocked but other domain parts might have a wrong state, as it got blocked not like the test-case intended to.  
                             //TODO: To be more specific on if other URLs really got blocked by CWS or by other security. 
                             if (returnValues[0][0] && returnValues.length > 1) {
@@ -781,6 +781,7 @@ function createOptionsPage() {
     }
 
     //TODO: Create a configuration clear button to rest all
+    //TODO: Import Export functionality for testConfig
 
     const initHtml = `
         <div class="row"><br><br></div>
