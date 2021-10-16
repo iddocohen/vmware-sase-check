@@ -564,6 +564,9 @@ function createOptionsPage() {
         } else if (index == 0) {
            code = `value="403"`;
         }
+        if (index == 0) {
+           code += "disabled"
+        }
         if (span){
             span = `<span class="input-group-text w-25">URL and expected http status code</span>`;
         } else {
