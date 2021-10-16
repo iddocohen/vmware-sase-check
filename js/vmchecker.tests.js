@@ -79,7 +79,6 @@ function Stats (oarr) {
     delete this.sum;
 }
 
-
 async function doAjax(url, obj={type: undefined, request:undefined}) {
     let ret = [];
     let time;
@@ -108,11 +107,21 @@ async function doAjax(url, obj={type: undefined, request:undefined}) {
                 ret.push(time.elapsed());
                 ret.push(data)
             },
-            error: function(jqXHR) {
+            error: function(jqXHR, exception) {
+                let msg = '';
+                if (jqXHR.status === 0) {
+                    msg = 'No connection. Verify network.';
+                } else if (exception === 'parsererror') {
+                    msg = 'Requested JSON parse failed.';
+                } else if (exception === 'timeout') {
+                    msg = 'Time out error.';
+                } else if (exception === 'abort') {
+                    msg = 'Ajax request aborted.';
+                } 
                 ret.push(jqXHR);
                 ret.push(xhr);
                 ret.push(time.elapsed());
-                ret.push(undefined);
+                ret.push(msg);
             },
             timeout: 5000
         });
@@ -279,7 +288,7 @@ async function doTesting(sites) {
                 bool = true;
             } 
         }
-        ret.push([bool, classified, rtt, url, xhr.status]);
+        ret.push([bool, classified, rtt, url, xhr.status, data]);
     }
     return ret;
 }
@@ -464,7 +473,7 @@ function createTestPage () {
                 let asyncFunc = doTesting(listWebsites);
                 if (typeof asyncFunc === "object") {
                     Promise.resolve(asyncFunc).then(function(returnValues) {
-                        let [isBlocked, data, rtt, url, code] = returnValues[0];
+                        let [isBlocked, data, rtt, url, code, msg] = returnValues[0];
                         if (returnValues.length > 1) {
                             for (let i=1 ; i < returnValues.length; ++i) {
                                 let [isOtherBlocked] = returnValues[i];
@@ -492,7 +501,7 @@ function createTestPage () {
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
-                            $(bodyText).html(failMessage);
+                            $(bodyText).html("<strong>"+msg+"</strong>");
                             $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
                         }
                         let length = 0;
