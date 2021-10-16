@@ -471,11 +471,11 @@ function createTestPage () {
                                 isBlocked = isBlocked && isOtherBlocked; 
                             }
                         }
-                        if (isBlocked == true) {
+                        if (isBlocked == true && code > 100) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
                             $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
-                        }else if (isBlocked == false) {
+                        }else if (isBlocked == false && code > 100) {
                             // Main website got blocked but other domain parts might have a wrong state, as it got blocked not like the test-case intended to.  
                             //TODO: To be more specific on if other URLs really got blocked by CWS or by other security. 
                             if (returnValues[0][0] && returnValues.length > 1) {
@@ -555,17 +555,25 @@ function createOptionsPage() {
         return div;
     } 
     function aWebsite(id, disabled, index=0, url="", code="", span=false) {
-        
+        //TODO: Refactor code 
         if (url != "") {
             url = `value="${url}"`;
         }
         if (code != "") {
-            code = `value="${code}"`;
+           code = `value="${code}"`;
+        } else if (index == 0) {
+           code = `value="403"`;
         }
         if (span){
             span = `<span class="input-group-text w-25">URL and expected http status code</span>`;
         } else {
             span = "";
+        }
+        let message = "";
+        if (index == 0){
+            message = "Please provide a valid https:// or http:// url and status code of 403 for first status code definition."
+        } else {
+            message = "Please provide a valid https:// or http:// url and status code between 100-599."
         }
         const div = `
             <div class="input-group mb-4">
@@ -573,7 +581,7 @@ function createOptionsPage() {
                 <input type="text" class="form-control w-50" placeholder="https://example.com" aria-label="https://example.com" id="${id}_${index}_url" ${disabled} ${url}>
                 <input type="text" class="form-control" placeholder="403" aria-label="403" id="${id}_${index}_code" ${disabled} ${code}>
                 <div class="invalid-feedback">
-                    Please provide a valid https:// or http:// url and http status code between 100-599.
+                    ${message}
                 </div> 
             </div>
         `;
@@ -765,14 +773,14 @@ function createOptionsPage() {
     const initHtml = `
         <div class="row"><br><br></div>
         <div class="container top30">
-           <legend>Configure Domains which Performance are Tested Against</legend>
-           <div class="row g-3" id="testingDomains"></div>
+           <legend>Current Test-Cases</legend>
+           <div id="testConfig"></div>
            <hr class="bg-danger border-4 border-top border-black">
            <legend>Add/Edit Test-Cases</legend>
            <div id="testConfigEdit"></div>
            <hr class="bg-danger border-4 border-top border-black">
-           <legend>Current Test-Cases</legend>
-           <div id="testConfig"></div>
+           <legend>Configure Domains which Performance are Tested Against</legend>
+           <div class="row g-3" id="testingDomains"></div>
         </div>
     `; 
     $(document.body).append(initHtml);
@@ -901,7 +909,11 @@ function createOptionsPage() {
             } else {
                 toggleValid(urlIndex, true); 
             }
+
             if (isNaN(websites[i].code)) {
+                toggleValid(codeIndex, false); 
+                error = true;
+            } else if (i == 0 && websites[i].code != 403){
                 toggleValid(codeIndex, false); 
                 error = true;
             } else if (websites[i].code < 100 || websites[i].code >= 600) {
