@@ -1005,6 +1005,7 @@ function createOptionsPage() {
              }  
          } else if ($(this).attr('id') == "restOverallConfiguration") {
             await clearStorageData();
+            await setConfig();
             displayPage("options");
          } else {
              let [property, arrIndex, action] = $(this).attr('id').split('_');
