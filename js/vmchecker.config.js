@@ -363,4 +363,4 @@ function Extension () {
 
 let ext = new Extension();
 
-export { ext, faqConfig, defaultTestConfig, defaultTestingDomains, existingCategories};
+export { ext, faqConfig,  defaultTestConfig, defaultTestingDomains, existingCategories};

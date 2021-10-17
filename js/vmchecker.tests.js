@@ -652,15 +652,19 @@ function createOptionsPage() {
                     if (testObj.property != "system") { 
                         colDiv += `
                             <div class="col-2 form-check">
-                                <button type="button" class="btn btn-danger" id='${rowId}_delete'>Delete</button>
-                                <button type="button" class="btn btn-primary" id='${rowId}_edit'>Edit</button>
-                                <button type="button" class="btn btn-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                                <button type="button" class="btn btn-outline-danger" id='${rowId}_delete'>
+                                     <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Save"><use xlink:href="#trash-img"/></svg>
+                                </button>
+                                <button type="button" class="btn btn-outline-primary" id='${rowId}_edit'>
+                                     <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Save"><use xlink:href="#edit-img"/></svg>
+                                </button>
+                                <button type="button" class="btn btn-outline-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
                             </div>
                             `;
                     } else {
                         colDiv += `
                             <div class="col-2 form-check">
-                                <button type="button" class="btn btn-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                                <button type="button" class="btn btn-outline-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
                             </div>
                             `;
                     }
@@ -786,6 +790,9 @@ function createOptionsPage() {
     const initHtml = `
         <div class="row"><br><br></div>
         <div class="container top30">
+           <legend>General Control</legend>
+           <div class="row g-3" id="generalControl"></div>
+           <hr class="bg-danger border-4 border-top border-black">
            <legend>Current Test-Cases</legend>
            <div id="testConfig"></div>
            <hr class="bg-danger border-4 border-top border-black">
@@ -798,13 +805,28 @@ function createOptionsPage() {
     `; 
     $(document.body).append(initHtml);
 
-    const div = createListTestingDomains();
-    $("#testingDomains").append(div);
+   
+    $("#generalControl").append( 
+            `
+             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                 <button type="button" class="btn btn-danger" id='restOverallConfiguration'>
+                    <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Reset"><use xlink:href="#trash-img"/></svg>
+                    Reset overall configuration
+                 </button>
+             </div>
+            `
+    );
+ 
+    $("#testingDomains").append(createListTestingDomains());
 
     const divButtons = `
             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                <button type="button" class="btn btn-primary" id='testingDomainsSubmit'>Save Configuration</button>
-                <button type="button" class="btn btn-primary" id='testingDomainsAdd'>Add Input</button>
+                <button type="button" class="btn btn-success" id='testingDomainsSubmit'>
+                <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Save"><use xlink:href="#save-img"/></svg>
+                Save domain configuration</button>
+                <button type="button" class="btn btn-outline-primary" id='testingDomainsAdd'>
+                <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Add"><use xlink:href="#add-img"/></svg>
+                Add URL input</button>
             </div>
     `;
     $("#testingDomains").append(divButtons);
@@ -829,20 +851,16 @@ function createOptionsPage() {
     const buttonConfigEdit = `
          <div class="row g-3 top5">
                     <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                        <button type="button" class="btn btn-primary" id='testConfigSubmit'>Save Test-Case</button>
+                        <button type="button" class="btn btn-success" id='testConfigSubmit'>
+                        <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Save"><use xlink:href="#save-img"/></svg>
+                        Save test-case</button>
                         <button type="button" class="btn btn-outline-primary" id='addWebsite'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle" viewBox="0 0 16 16">
-                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
-                          <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"/>
-                        </svg>
-                        Add additional URL
+                        <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Add"><use xlink:href="#add-img"/></svg>
+                        Add URL input
                         </button>
                         <button type="button" class="btn btn-outline-primary" id='deleteWebsite'>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
-                            <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
-                        </svg>
-                        Delete additional URL
+                        <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Delete"><use xlink:href="#trash-img"/></svg>
+                        Delete last URL input
                         </button>
                 </div>
            </div>
@@ -985,6 +1003,9 @@ function createOptionsPage() {
              if (length-1 > 0){
                 $("#websites").children("div:last").remove();
              }  
+         } else if ($(this).attr('id') == "restOverallConfiguration") {
+            await clearStorageData();
+            displayPage("options");
          } else {
              let [property, arrIndex, action] = $(this).attr('id').split('_');
              const websitesId = property+"_"+arrIndex+"_websites";
@@ -1034,7 +1055,7 @@ const getStorageData = key =>
   new Promise((resolve, reject) =>
     ext.storage.local.get(key, result =>
       ext.runtime.lastError
-        ? reject(Error(ext.runtime.lastError.message))
+        ? reject(error(ext.runtime.lastError.message))
         : resolve(result)
     )
   )
@@ -1043,7 +1064,7 @@ const setStorageData = data =>
   new Promise((resolve, reject) =>
     ext.storage.local.set(data, () =>
       ext.runtime.lastError
-        ? reject(Error(ext.runtime.lastError.message))
+        ? reject(error(ext.runtime.lastError.message))
         : resolve()
     )
   )
@@ -1052,7 +1073,7 @@ const clearStorageData = key =>
   new Promise((resolve, reject) =>
     ext.storage.local.clear(() =>
       ext.runtime.lastError
-        ? reject(Error(ext.runtime.lastError.message))
+        ? reject(error(ext.runtime.lastError.message))
         : resolve()
     )
   )
@@ -1076,7 +1097,7 @@ async function setConfig() {
 
     if (Object.keys(stored).length === 0) {
         setStorageData({testingDomains: defaultTestingDomains});
-        testingDomains = defaultTestingDomains;
+        testingDomains = [...defaultTestingDomains];
         log("Stored testingDomains default");
     } else {
         testingDomains = [...stored['testingDomains']];
@@ -1086,10 +1107,11 @@ async function setConfig() {
     stored = await getStorageData('testConfig');
 
     if (Object.keys(stored).length === 0) {
-        setStorageData({testConfig: defaultTestConfig});
+        //testConfig = [...defaultTestConfig];
+        testConfig = JSON.parse(JSON.stringify(defaultTestConfig));
+        setStorageData({testConfig: testConfig});
         setStorageData({mergedStatus:false});
         setStorageData({storedVersion:version});
-        testConfig = defaultTestConfig;
         log("Stored testConfig default");
     } else {
         const {mergedStatus}     = await getStorageData('mergedStatus');
@@ -1102,13 +1124,15 @@ async function setConfig() {
                     userTestConfig.push(o);
                 }
             }
-            testConfig = defaultTestConfig.concat(userTestConfig);
+            //testConfig = [...defaultTestConfig.concat(userTestConfig)];
+            testConfig = JSON.parse(JSON.stringify(defaultTestConfig.concat(userTestConfig)));
             setStorageData({testConfig: testConfig});
             setStorageData({mergedStatus:true});
             setStorageData({storedVersion:version});
             log('Merged and stored new testConfig');
         } else {
-            testConfig = stored['testConfig'];
+            //testConfig = [...stored['testConfig']];
+            testConfig = JSON.parse(JSON.stringify(stored['testConfig']));
             log('Using testConfig Stored');
         }
     }
