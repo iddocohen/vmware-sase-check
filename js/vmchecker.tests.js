@@ -647,8 +647,9 @@ function createOptionsPage() {
                     colDiv += `</select></div>`;
                     break;
                 case "isEnabled":
-                    const switchButton = ((testObj.isEnabled) ? "Disable": "Enable");
-                    const colorButton = ((testObj.isEnabled) ? "success": "warning");
+                    //const switchButton = ((testObj.isEnabled) ? "Disable": "Enable");
+                    //const colorButton = ((testObj.isEnabled) ? "success": "warning");
+                    const checked = ((testObj.isEnabled) ? "checked" : "");
                     if (testObj.property != "system") { 
                         colDiv += `
                             <div class="col-2 form-check">
@@ -658,13 +659,17 @@ function createOptionsPage() {
                                 <button type="button" class="btn btn-outline-primary" id='${rowId}_edit'>
                                      <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Save"><use xlink:href="#edit-img"/></svg>
                                 </button>
-                                <button type="button" class="btn btn-outline-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                                <div class="form-switch">
+                                    <input class="btn form-check-input" type="checkbox" id="${rowId}_switch" ${checked}>
+                                </div>
                             </div>
                             `;
                     } else {
                         colDiv += `
-                            <div class="col-2 form-check">
-                                <button type="button" class="btn btn-outline-${colorButton}" id='${rowId}_switch'>${switchButton}</button>
+                            <div class="col-1 form-check">
+                                <div class="form-switch">
+                                    <input class="btn form-check-input" type="checkbox" id="${rowId}_switch" ${checked}>
+                                </div>
                             </div>
                             `;
                     }
@@ -1017,8 +1022,9 @@ function createOptionsPage() {
                     displayPage("options");
                     break;
                 case "switch":
-                    const buttonText = $(this).text().trim();
-                    if ( buttonText == "Disable") {
+                    //const buttonText = $(this).text().trim();
+                    const checked = $(this).is(':checked');
+                    if (!checked) {
                         testConfig[arrIndex].isEnabled = false;
                     } else {
                         testConfig[arrIndex].isEnabled = true;
@@ -1109,7 +1115,9 @@ async function setConfig() {
 
     if (Object.keys(stored).length === 0) {
         //testConfig = [...defaultTestConfig];
-        testConfig = JSON.parse(JSON.stringify(defaultTestConfig));
+        //testConfig = JSON.parse(JSON.stringify(defaultTestConfig));
+        //testConfig = defaultTestConfig.slice(0);
+        testConfig = defaultTestConfig.map(a => {return {...a}});
         setStorageData({testConfig: testConfig});
         setStorageData({mergedStatus:false});
         setStorageData({storedVersion:version});
@@ -1126,17 +1134,22 @@ async function setConfig() {
                 }
             }
             //testConfig = [...defaultTestConfig.concat(userTestConfig)];
-            testConfig = JSON.parse(JSON.stringify(defaultTestConfig.concat(userTestConfig)));
+            //testConfig = JSON.parse(JSON.stringify(defaultTestConfig.concat(userTestConfig)));
+            //testConfig = defaultTestConfig.concat(userTestConfig).slice(0);
+            testConfig = defaultTestConfig.concat(userTestConfig).map(a => {return {...a}});
             setStorageData({testConfig: testConfig});
             setStorageData({mergedStatus:true});
             setStorageData({storedVersion:version});
             log('Merged and stored new testConfig');
         } else {
             //testConfig = [...stored['testConfig']];
-            testConfig = JSON.parse(JSON.stringify(stored['testConfig']));
+            //testConfig = JSON.parse(JSON.stringify(stored['testConfig']));
+            //testConfig = stored['testConfig'].slice(0);
+            testConfig = stored['testConfig'].map(a => {return {...a}});
             log('Using testConfig Stored');
         }
     }
+    log(testConfig);
 }
 
 $(function() {
