@@ -273,8 +273,8 @@ async function doTesting(sites) {
         let [jqXHR, xhr, rtt, data] = await doAjax(url); 
         let classified              = "";
         let bool                    = false;
-        if (expected_code == xhr.status) {
-            if (xhr.status == 403) {
+        if (expected_code === xhr.status) {
+            if (xhr.status === 403) {
                 try {
                     if (jqXHR.responseText.includes("VMware Cloud Web Security")) {
                         let forbidden = $.parseHTML(jqXHR.responseText);
