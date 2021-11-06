@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "VMware CWS Checker",
   "description": "Auto test performance and security enforcements against VMware Cloud Web Security (CWS) offering.",
-  "version": "0.21",
+  "version": "0.22",
   "author": "Iddo Cohen",
   "incognito":"split",
   "icons": { 
