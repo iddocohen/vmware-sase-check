@@ -308,7 +308,7 @@ function progressBar(sum, count){
     let num = round((count / sum) * 100);
     $(".progress-bar").css("width", num+"%");
     $(".progress-bar").attr("aria-valuenow", num);
-    $(".progress-bar").text(num+"%");
+    $(".progress-bar").text(num+"%"+" ("+count+"/"+sum+")");
 }
 
 function changeButton(object, text, css="primary") {
@@ -1095,9 +1095,6 @@ function getVersion() {
 }
 
 async function setConfig() {
-    //await clearStorageData();
-    //ext.storage.local.getBytesInUse( log);
-    
     const version = await getVersion();
     
     let stored = await getStorageData('testingDomains');
@@ -1153,6 +1150,7 @@ async function setConfig() {
 }
 
 $(function() {
+    //TODO: Try to get getVersion() to work here. Await is not working before load.
     $.getJSON("../manifest.json", function (data) { 
         const version = `v${data.version}`;
         let html = $(".navbar-brand").html();
