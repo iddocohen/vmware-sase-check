@@ -21,7 +21,7 @@
 [Please visit the Trello page](https://trello.com/b/yEeXfNJv/vmware-cws-checker-roadmap)
 
 ## Getting Started
-### Google Chrome
+### Chrome version 92+ 
 
 [On web store](https://chrome.google.com/webstore/detail/vmware-cws-checker/aaahmofhpokmcblajnpgledopdmaedfl)
 
