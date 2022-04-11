@@ -180,7 +180,7 @@ const defaultTestConfig = [
         category: "cinspect",
         version: 1,
         property: "system",
-        isEnabled: true,
+        isEnabled: false,
         websites: [ 
               {
                 url: "https://storage.googleapis.com/dummyfile-storage-securityscorecard/PoC-test-pdf.pdf",
