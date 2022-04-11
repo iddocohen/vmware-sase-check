@@ -9,6 +9,10 @@
 
 import {ext} from './vmchecker.config.js';
 
-ext.browserAction.onClicked.addListener(function(tab) {
-    ext.tabs.create({ url: ext.runtime.getURL('vmchecker.tests.html')});
-});
+try {
+    ext.action.onClicked.addListener(function(tab) {
+        ext.tabs.create({ url: ext.runtime.getURL('vmchecker.tests.html')});
+    });
+} catch (e) { console.error(e); }
+
+

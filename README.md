@@ -9,16 +9,19 @@
 <img src="https://github.com/iddocohen/vmware-sase-check/blob/main/screenshot/Overview-google.png?raw=true" alt="Overview of VMware CWS Checker">
 
 ## Releases
+
 - Unstable:
     - current main repository
-- Stable: 
-    - [v0.2](https://github.com/iddocohen/vmware-sase-check/releases/tag/v0.2) 
+- Stable for Chrome, Firefox and Edge: 
+    - [v0.21](https://github.com/iddocohen/vmware-sase-check/releases/tag/v0.21) 
+
+**Please note:** Latest extension standards uses manifest v3. It ensures better security and quicker development turnaround. Unfortunately Firefox and Edge do not support it yet. Until they do, please use older version of code for Firefox/Edge use-case. For all new features, please consider to use Chrome.
 
 ## Roadmap
 [Please visit the Trello page](https://trello.com/b/yEeXfNJv/vmware-cws-checker-roadmap)
 
 ## Getting Started
-**Google Chrome**
+### Google Chrome
 
 [On web store](https://chrome.google.com/webstore/detail/vmware-cws-checker/aaahmofhpokmcblajnpgledopdmaedfl)
 
@@ -31,27 +34,27 @@ Or via:
 5. Drag the `vmware-sase-check-main` folder anywhere on the page to import it (do not delete the folder afterwards).
 6. Click then on the extension icon (on the top right corner) and pin the new plugin (so you can see it all the time). 
 
-**Firefox**
-1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
+**Notes**
+* Every time you open Chrome it may warn you about running extensions in developer mode, just click &#10005; to keep the extension enabled.
+
+### Firefox
+
+1. Download this repo as stable release listed above.
+2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>`.
 3. Open Firefox
 4. Enter 'about:debugging' in the URL bar
 5. Click 'This Firefox'
 6. Click 'Load Temporary Add-on'
 7. Open the extension's directory and select manifest.json.
 
-**Edge**
-1. Download this repo as stable release listed above or newer changes via [ZIP file from GitHub](https://github.com/iddocohen/vmware-sase-check/archive/refs/heads/main.zip).
-2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>` when downloading a release or `vmware-sase-check-main`.
+### Edge
+1. Download this repo as stable release listed above.
+2. Unzip the file and you should have a folder named `vmware-sase-check-<version name here>`.
 3. In Edge enable developer mode by going to 'about:flags' and check box 'Enable extension developer features'.
 4. Restart Edge.
 5. Click on Settings (icon with ...).
 6. Click on Extension.
 7. Use 'Load Extension' and select the whole folder.
-
-
-**Notes**
-* Every time you open Chrome it may warn you about running extensions in developer mode, just click &#10005; to keep the extension enabled.
 
 ## Contributing
 
