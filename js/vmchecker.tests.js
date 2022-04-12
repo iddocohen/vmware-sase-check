@@ -79,25 +79,22 @@ function Stats (oarr) {
     delete this.sum;
 }
 
-async function doAjax(url, obj={type: undefined, request:undefined}) {
+async function doAjax(url, obj={type: undefined, request:undefined, payload:undefined}) {
     let ret = [];
     let time;
 
     let type     = obj.request || "GET";
     let datatype = obj.type    || "html";
+    let payload  = obj.payload || "";
 
-
-    try {
-        // Putting everything in separte XHR to get a bit more information
-        var xhr = new XMLHttpRequest();
-        await $.ajax({
+    var xhr = new XMLHttpRequest();
+    let ajaxBase = {
             type: type,
             beforeSend: function() {
                 time = new Timer();
             },
             url: url,
             cache: false,
-            dataType: datatype,
             xhr: function () {
                 return xhr;
             },
@@ -122,9 +119,29 @@ async function doAjax(url, obj={type: undefined, request:undefined}) {
                 ret.push(xhr);
                 ret.push(time.elapsed());
                 ret.push(msg);
-            },
+            }
+    }
+
+    let ajaxFinal = {};
+
+    if (type === "GET"){
+        ajaxFinal = {
+            ...ajaxBase, 
+            dataType: datatype,
             timeout: 5000
-        });
+        };
+    } else if (type === "POST") {
+        ajaxFinal = {
+            ...ajaxBase, 
+            processData: false,
+            contentType: false,
+            data: payload
+        };
+    }
+
+    try {
+        // Putting everything in separte XHR to get a bit more information
+        await $.ajax(ajaxFinal);
     } catch (e) {
        //error(e)
     }
@@ -265,12 +282,44 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
     }   
 }    
 
+function randomId(length) {
+    let result           = '';
+    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for ( let i = 0; i < length; ++i ) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+
+const getFormDataSize = (formData) => [...formData].reduce((size, [name, value]) => size + (typeof value === 'string' ? value.length : value.size), 0);
+
 async function doTesting(sites) {
     let ret = [];
     for (let i=0; i < sites.length; ++i) {
         let url                     = sites[i].url;
         let expected_code           = sites[i].code;
-        let [jqXHR, xhr, rtt, data] = await doAjax(url); 
+        let request                 = sites[i].request || "GET";
+        //TODO: Support files in the future and not only user input
+        let payload                 = undefined;
+        if (request === "POST") {
+               payload = new FormData();
+               let t = sites[i].form;
+               log(t.length);
+               for (let j = 0; j < sites[i].form.length; ++j){
+                    let o = sites[i].form[j]; 
+                    for (const [key, value] of Object.entries(o)) {
+                        payload.append(key,value);
+                    }
+               }
+               // To trigger VMware DLPs for user-input one needs to have a minimum of 1KB as payload - generating 1KB string and add it to existing content.
+               // TODO: Determine actual size of formData and generate a total of 1KB only. 
+               payload.append("_hidden_random_data_", randomId(1024)); 
+               for (var pair of payload.entries()) {
+                    log(pair[0]+ ', ' + pair[1]); 
+               }
+        }
+        let [jqXHR, xhr, rtt, data] = await doAjax(url, {request: request, payload: payload}); 
         let classified              = "";
         let bool                    = false;
         if (expected_code === xhr.status) {
@@ -467,6 +516,7 @@ function createTestPage () {
                 break;
             case "casb":
             case "urlfilter":
+            case "dlp":
             case "cinspect":
                 let [howMessage, failMessage, loadMessage, listWebsites] = lookup(id);
                 $(footerText).text(loadMessage);
@@ -844,7 +894,7 @@ function createOptionsPage() {
             }
         }).get();
         await setStorageData({testingDomains:newTestingDomains});
-        displayPage("options"); 
+        displayPage("config"); 
     });
     
     $('#testingDomainsAdd').on('click', function() {
@@ -996,7 +1046,7 @@ function createOptionsPage() {
         }
 
         await setStorageData({testConfig: newTestConfig});
-        displayPage("options");
+        displayPage("config");
      });
      
      $('.btn').on('click', async function() {
@@ -1011,7 +1061,7 @@ function createOptionsPage() {
          } else if ($(this).attr('id') == "restOverallConfiguration") {
             await clearStorageData();
             await setConfig();
-            displayPage("options");
+            displayPage("config");
          } else {
              let [property, arrIndex, action] = $(this).attr('id').split('_');
              const websitesId = property+"_"+arrIndex+"_websites";
@@ -1019,7 +1069,7 @@ function createOptionsPage() {
                 case "delete": 
                     testConfig.splice(arrIndex,1);
                     await setStorageData({testConfig: testConfig});
-                    displayPage("options");
+                    displayPage("config");
                     break;
                 case "switch":
                     //const buttonText = $(this).text().trim();
@@ -1030,7 +1080,7 @@ function createOptionsPage() {
                         testConfig[arrIndex].isEnabled = true;
                     }
                     await setStorageData({testConfig: testConfig});
-                    displayPage("options");
+                    displayPage("config");
                     break;
                 case "edit":
                     $("#testConfigEdit form").remove();
@@ -1047,7 +1097,7 @@ async function displayPage(page) {
         case "faq":
             createFaqPage();
             break;
-        case "options":
+        case "config":
             await setConfig();
             createOptionsPage();
             break;

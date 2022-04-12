@@ -22,7 +22,7 @@ const defaultTestingDomains = [
 
 const existingCategories = [
     { id: "casb",       humanReadable: "Cloud Access Security Broker (CASB)", isEnabled: true },
-    { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: false },
+    { id: "dlp",        humanReadable: "Data Loss Prevention (DLP)",          isEnabled: true },
     { id: "urlfilter",  humanReadable: "URL Filtering",                       isEnabled: true},
     { id: "cinspect",   humanReadable: "Content Inspection",                  isEnabled: true },
 ]
@@ -189,6 +189,53 @@ const defaultTestConfig = [
               {
                 url: "https://storage.googleapis.com/",
                 code: 400
+              }
+       ]
+     },
+     {
+        title: "Block credit card exfiltration encrypted over SSL",
+        desc: "This test attempts to exfiltrate numbers that match the format of valid credit card numbers, to an HTTPS (SSL encrypted) website",
+        detail: "This test tries to exfiltrate numbers out of your network that match the format of credit card numbers. In addition, this test validates whether SSL inspection is enabled. Your network security solution should identify this encrypted data leakage.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        fail : "Most exploits are attempting to create a backdoor in infected devices that paves the way for additional malware. With VMware CWS <strong>Content Inspection</strong> this zero-day exploits and well-know exploits can be detected and mitigated.",
+        load : "Trying to send credit card numbers over the network...",
+        id: "block_credit_card",
+        category: "dlp",
+        version: 1,
+        property: "system",
+        isEnabled: true,
+        websites: [ 
+              {
+                request: "POST",
+                form: [
+                    {
+                        "name": "Robert Aragon",
+                        "ssn": "489-36-8350",
+                        "cc_card": "4929-3813-3266-4295",
+                    },
+                    {
+                        "name": "Ashley Borden",
+                        "ssn": "514-14-8905",
+                        "cc_card": "5370-4638-8881-3020",
+                    },
+                    {
+                        "name": "Thomas Conley",
+                        "ssn": "690-05-5315",
+                        "cc_card": "4916-4811-5814-8111"
+                    }
+                ],
+                url: "https://httpbin.org/post",
+                code: 403
+              }, 
+              {
+                request: "POST",
+                form: [],
+                url: "https://httpbin.org/post",
+                code: 200
+              },
+              {
+                url: "https://httpbin.org/",
+                code: 200
               }
        ]
      },
