@@ -301,11 +301,9 @@ async function doTesting(sites) {
         let expected_code           = sites[i].code;
         let request                 = sites[i].request || "GET";
         //TODO: Support files in the future and not only user input
-        let payload                 = undefined;
+        let payload                 = "";
         if (request === "POST") {
                payload = new FormData();
-               let t = sites[i].form;
-               log(t.length);
                for (let j = 0; j < sites[i].form.length; ++j){
                     let o = sites[i].form[j]; 
                     for (const [key, value] of Object.entries(o)) {
@@ -314,10 +312,8 @@ async function doTesting(sites) {
                }
                // To trigger VMware DLPs for user-input one needs to have a minimum of 1KB as payload - generating 1KB string and add it to existing content.
                // TODO: Determine actual size of formData and generate a total of 1KB only. 
-               payload.append("_hidden_random_data_", randomId(1024)); 
-               for (var pair of payload.entries()) {
-                    log(pair[0]+ ', ' + pair[1]); 
-               }
+               //payload.append("_random_data_", randomId(1024 - 151 - getFormDataSize(payload))); 
+               payload.append("_random_data_", randomId(1024)); 
         }
         let [jqXHR, xhr, rtt, data] = await doAjax(url, {request: request, payload: payload}); 
         let classified              = "";
@@ -613,8 +609,11 @@ function createOptionsPage() {
         `;
         return div;
     } 
-    function aWebsite(id, disabled, index=0, url="", code="", span=false) {
+    function aWebsite(id, disabled, index=0, url="", code="", request="", span=false) {
         //TODO: Refactor code 
+        if (request != "") {
+            request = `value="${request}"`;
+        }
         if (url != "") {
             url = `value="${url}"`;
         }
@@ -640,6 +639,7 @@ function createOptionsPage() {
         const div = `
             <div class="input-group mb-4">
                 ${span}
+                <input type="text" class="form-control" placeholder="GET" aria-label="GET" id="${id}_${index}_request" disabled ${request}>
                 <input type="text" class="form-control w-50" placeholder="https://example.com" aria-label="https://example.com" id="${id}_${index}_url" ${disabled} ${url}>
                 <input type="text" class="form-control" placeholder="403" aria-label="403" id="${id}_${index}_code" ${disabled} ${code}>
                 <div class="invalid-feedback">
@@ -673,9 +673,10 @@ function createOptionsPage() {
                         for (let i=0; i<testObj.websites.length; ++i) {
                             try { 
                                 let o = testObj.websites[i];
-                                colDiv += aWebsite(id,disabled,i,o.url,o.code);
+                                let r = o.request || "GET";
+                                colDiv += aWebsite(id,disabled,i,o.url,o.code,r);
                             } catch (e) {
-                                colDiv += aWebsite(id,disabled,i,"","");
+                                colDiv += aWebsite(id,disabled,i,"","","");
                             }
                         }
                     } else {
@@ -791,7 +792,8 @@ function createOptionsPage() {
     
         let divWebsites = "";
         for (let i=0; i<websites.length; ++i) {
-            divWebsites += aWebsite('websites', '',i, websites[i].url, websites[i].code, true);
+            let r = websites[i].request || "GET";
+            divWebsites += aWebsite('websites', '',i, websites[i].url, websites[i].code, r, true);
         }
 
         const checked = ((isEnabled) ? "checked" : "");
@@ -839,7 +841,6 @@ function createOptionsPage() {
 
     }
 
-    //TODO: Create a configuration clear button to rest all
     //TODO: Import Export functionality for testConfig
 
     const initHtml = `
@@ -866,8 +867,34 @@ function createOptionsPage() {
              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
                  <button type="button" class="btn btn-danger" id='restOverallConfiguration'>
                     <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Reset"><use xlink:href="#trash-img"/></svg>
-                    Reset overall configuration
+                    Reset configuration
                  </button>
+                 <button type="button" class="btn btn-outline-primary" id='showOverallConfiguration'>
+                    <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Show"><use xlink:href="#show-img"/></svg>
+                    Show configuration
+                 </button>
+                 <div id="modalTestConfig" class="modal fade">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Raw Configuration Stored</h5>
+                                <button type="button" class="btn close" data-dismiss="modal" id="modalCancelTestConfig"">&times;</button>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="inputComment"></label>
+                                        <textarea class="form-control" id="modalInputTestConfig"></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="modalDiscardTestConfig">Discard</button>
+                                <button type="button" class="btn btn-primary" id="modalSaveTestConfig">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
              </div>
             `
     );
@@ -1053,7 +1080,7 @@ function createOptionsPage() {
          //TODO: Refactor this code a bit better
          const length = $("#websites").find(".input-group").length; 
          if ($(this).attr('id') == "addWebsite") {
-             $("#websites").append(aWebsite("websites","",length,"","",true));
+             $("#websites").append(aWebsite("websites","",length,"","","GET",true));
          } else if ($(this).attr('id') == "deleteWebsite") {
              if (length-1 > 0){
                 $("#websites").children("div:last").remove();
@@ -1062,9 +1089,25 @@ function createOptionsPage() {
             await clearStorageData();
             await setConfig();
             displayPage("config");
+         } else if ($(this).attr('id') == "showOverallConfiguration") {
+            let str = JSON.stringify(testConfig, undefined, 4);
+            $("#modalInputTestConfig").val(str);
+            //TODO: Dynamicly change height of textarea based on modal size
+            $("#modalInputTestConfig").height("500px");
+            $("#modalTestConfig").modal("show");    
+         } else if ($(this).attr('id') == "modalSaveTestConfig") {
+            let str = $("#modalInputTestConfig").val();    
+            try {
+                let newTestConfig = JSON.parse(str);
+                await setStorageData({testConfig: newTestConfig});
+            } catch (e) {
+                log("Not valid JSON");
+            } 
+            displayPage("config");
+         } else if ($(this).attr('id') === "modalCancelTestConfig" || $(this).attr('id') === "modalDiscardTestConfig") {
+             displayPage("config");
          } else {
              let [property, arrIndex, action] = $(this).attr('id').split('_');
-             const websitesId = property+"_"+arrIndex+"_websites";
              switch(action) {
                 case "delete": 
                     testConfig.splice(arrIndex,1);
@@ -1215,6 +1258,7 @@ $(window).bind("load", function () {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const page = urlParams.get('page');
+    // e.g. vmchecker.tests.html?page=config
     displayPage(page);
     $('.nav-link').on('click', function() {
         const linkClicked = $(this);
