@@ -1096,14 +1096,19 @@ function createOptionsPage() {
             $("#modalInputTestConfig").height("500px");
             $("#modalTestConfig").modal("show");    
          } else if ($(this).attr('id') == "modalSaveTestConfig") {
-            let str = $("#modalInputTestConfig").val();    
+            let newTestConfig = {};
             try {
-                let newTestConfig = JSON.parse(str);
-                await setStorageData({testConfig: newTestConfig});
+                let str = $("#modalInputTestConfig").val();    
+                newTestConfig = JSON.parse(str);
             } catch (e) {
-                log("Not valid JSON");
-            } 
-            displayPage("config");
+                //TODO: Better error handling in the case that newTestConfig not a valid JSON. 
+                log(e);
+            }
+
+            if (Object.keys(newTestConfig).length !== 0) {
+                await setStorageData({testConfig: newTestConfig});
+                displayPage("config");
+            }
          } else if ($(this).attr('id') === "modalCancelTestConfig" || $(this).attr('id') === "modalDiscardTestConfig") {
              displayPage("config");
          } else {
