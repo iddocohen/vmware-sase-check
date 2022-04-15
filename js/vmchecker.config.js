@@ -108,7 +108,7 @@ const defaultTestConfig = [
         title: "Block malware files over HTTPs",
         desc: "This test tries to download the well known EICAR file over HTTPS to check if it gets blocked.",
         detail: "The damages that an organization may experience as a victim of malware can be listed as, data breaches, illegal removal of balance from bank accounts and unauthorized access to valuable files/documents.",
-        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/5.0/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "To protect your organisations from 0-day or known, malware, spyware and virus files, VMware CWS <strong>Content Inspection</strong> can be used to identify and block these automatically.",
         load : "Trying to download the eicar.com file over HTTPs...",
         id: "block_https_malware",
@@ -127,7 +127,7 @@ const defaultTestConfig = [
         title: "Block malware files over HTTP",
         desc: "This test tries to download the well known EICAR file over HTTP to check if it gets blocked.",
         detail:"Malware is a very powerful software that is a threat to the corporate organizations. The easy targets of malware are the multinational organizations. Primarily, organizations will face huge complications and internal damages if they fall prey to malware virus.",
-        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/5.0/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "To protect your organizations from 0-day or known, malware, spyware and virus files, VMware CWS <strong>Content Inspection</strong> can be used to identify and block this automatically.",
         load : "Trying to download the eicar.com file over HTTP...",
         id: "block_http_malware",
@@ -150,7 +150,7 @@ const defaultTestConfig = [
         title: "Block malware downloads from well-known cloud providers",
         desc: "This test attempts to download a malware from popular cloud application provider.",
         detail: "Netskope's new report in 2021 found that cloud storage apps account for more than 66% of cloud malware delivery. Cybercriminals deliver malware through cloud apps to bypass and take advantage of any app-specific allow lists.",
-        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/5.0/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "Organizations can become a potential big target and may face huge losses if, they do not take any effective to block malware from any kind of destination. VMware CWS can help with <strong>Content Inspection</strong> to reduce that risk.",
         load : "Trying to download the malware from AWS...",
         id: "block_cloud_malware",
@@ -173,7 +173,7 @@ const defaultTestConfig = [
         title: "Block files who have been compromised by exploited",
         desc: "This test checks if you are protected from known file-based exploits.",
         detail: "Exploitation activity is a race against the clock for all parties involved. Attackers are attempting to exploit vulnerabilities before vendors have an opportunity to patch them and to continue exploiting them before the consumer patches them.",
-        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
+        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/5.0/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
         fail : "Most exploits are attempting to create a backdoor in infected devices that paves the way for additional malware. With VMware CWS <strong>Content Inspection</strong> this zero-day exploits and well-know exploits can be detected and mitigated.",
         load : "Trying to download the pdf file which is exploited...",
         id: "block_file_exploits",
@@ -194,12 +194,12 @@ const defaultTestConfig = [
      },
      {
         title: "Block credit card exfiltration encrypted over SSL",
-        desc: "This test attempts to exfiltrate numbers that match the format of valid credit card numbers, to an HTTPS (SSL encrypted) website",
+        desc: "Data Loss Prevention helps businesses follow industry regulations and protect sensitive information. It also prevents inadvertent disclosure. Sensitive information that you need to prevent leaking outside your organization includes financial data, such as credit card numbers, social security numbers, or health records.",
         detail: "This test tries to exfiltrate numbers out of your network that match the format of credit card numbers. In addition, this test validates whether SSL inspection is enabled. Your network security solution should identify this encrypted data leakage.",
-        how  : "If not already done so, isEnabled the <strong>Inspection Engine</strong> first by going under <strong>Policies</strong>. Then create a policy that inspects <strong>Upload</strong> and <strong>Download</strong> for <strong>All files</strong> and <strong>All User Group</strong> and <strong>All Domain/Categories</strong>. Last but not least use <strong>Action</strong> and select <strong>Inspect</strong> to ensure <strong>File Hash Check</strong>, <strong>File Full Scan</strong> and <strong>Sandbox Inspection</strong> are used for fitlering. For more info please visit <a href='https://docs.vmware.com/en/VMware-Cloud-Web-Security/4.4/VMware-Cloud-Web-Security-Configuration-Guide/GUID-A48C9642-A96C-4CC5-90E9-7C5490378661.html' target='_blank' rel='noopener' class='link-light'>here</a>.",
-        fail : "Most exploits are attempting to create a backdoor in infected devices that paves the way for additional malware. With VMware CWS <strong>Content Inspection</strong> this zero-day exploits and well-know exploits can be detected and mitigated.",
-        load : "Trying to send credit card numbers over the network...",
-        id: "block_credit_card",
+        how: "To ensure sensitive data does not get leaked, go to <strong>DLP</strong> under the <strong>Security Policies</strong> of choice, select <strong>Add Rule</strong>, select <strong>All User Groups</strong> in step1, select <strong>Inspect Text Input</strong> in step 2, <strong>All Domains and Categories</strong> in step 3, choose the directory <strong>Credit card numbers [Global]</strong> in step 4 and <strong>Block</strong> in step 5.",
+        fail: "A large share of all data security breach incidents involve non-malicious company insiders. In fact, Ponemon's \"2013 Cost of Data Breach Study: Global Analysis\" revealed that an astounding 35% of data security breaches in 2012 were simply caused by negligent employees or contractors. VMware CWS with DLP can ensure sensitive information (like credit cards) do not get exposed outside your organisation.",
+        load : "Trying to send credit card numbers over https...",
+        id: "block_credit_card_over_ssl",
         category: "dlp",
         version: 1,
         property: "system",
@@ -210,17 +210,14 @@ const defaultTestConfig = [
                 form: [
                     {
                         "name": "Robert Aragon",
-                        "ssn": "489-36-8350",
                         "cc_card": "4929-3813-3266-4295",
                     },
                     {
                         "name": "Ashley Borden",
-                        "ssn": "514-14-8905",
                         "cc_card": "5370-4638-8881-3020",
                     },
                     {
                         "name": "Thomas Conley",
-                        "ssn": "690-05-5315",
                         "cc_card": "4916-4811-5814-8111"
                     }
                 ],
@@ -239,6 +236,99 @@ const defaultTestConfig = [
               }
        ]
      },
+     {
+        title: "Block credit card exfiltration",
+        desc: "Data Loss Prevention helps businesses follow industry regulations and protect sensitive information. It also prevents inadvertent disclosure. Sensitive information that you need to prevent leaking outside your organization includes financial data, such as credit card numbers, social security numbers, or health records.",
+        detail: "This test tries to exfiltrate numbers out of your network that match the format of credit card numbers. Your network security solution should identify this encrypted data leakage.",
+        how: "To ensure sensitive data does not get leaked, go to <strong>DLP</strong> under the <strong>Security Policies</strong> of choice, select <strong>Add Rule</strong>, select <strong>All User Groups</strong> in step1, select <strong>Inspect Text Input</strong> in step 2, <strong>All Domains and Categories</strong> in step 3, choose the directory <strong>Credit card numbers [Global]</strong> in step 4 and <strong>Block</strong> in step 5.",
+        fail: "A large share of all data security breach incidents involve non-malicious company insiders. In fact, Ponemon's \"2013 Cost of Data Breach Study: Global Analysis\" revealed that an astounding 35% of data security breaches in 2012 were simply caused by negligent employees or contractors. VMware CWS with DLP can ensure sensitive information (like credit cards) do not get exposed outside your organisation.",
+        load : "Trying to send credit card numbers over http...",
+        id: "block_credit_card",
+        category: "dlp",
+        version: 1,
+        property: "system",
+        isEnabled: true,
+        websites: [ 
+              {
+                request: "POST",
+                form: [
+                    {
+                        "name": "Robert Aragon",
+                        "cc_card": "4929-3813-3266-4295",
+                    },
+                    {
+                        "name": "Ashley Borden",
+                        "cc_card": "5370-4638-8881-3020",
+                    },
+                    {
+                        "name": "Thomas Conley",
+                        "cc_card": "4916-4811-5814-8111"
+                    }
+                ],
+                url: "http://httpbin.org/post",
+                code: 403
+              }, 
+              {
+                request: "POST",
+                form: [],
+                url: "http://httpbin.org/post",
+                code: 200
+              },
+              {
+                url: "http://httpbin.org/",
+                code: 200
+              }
+       ]
+     },
+     {
+        title: "Block social security number exfiltration in Germany over SSL",
+        desc: "Data Loss Prevention helps businesses follow industry regulations and protect sensitive information. It also prevents inadvertent disclosure. Sensitive information that you need to prevent leaking outside your organization includes financial data, such as credit card numbers, social security numbers, or health records.",
+        detail: "This test tries to exfiltrate numbers out of your network that match the format of Social Security Number in Germany (Sozialversicherungsnummer). In addition, this test validates whether SSL inspection is enabled. Your network security solution should identify this encrypted data leakage.",
+        how: "To ensure sensitive data does not get leaked, go to <strong>DLP</strong> under the <strong>Security Policies</strong> of choice, select <strong>Add Rule</strong>, select <strong>All User Groups</strong> in step1, select <strong>Inspect Text Input</strong> in step 2, <strong>All Domains and Categories</strong> in step 3, choose the directory <strong>Credit card numbers [Global]</strong> in step 4 and <strong>Block</strong> in step 5.",
+        fail: "",
+        load : "Trying to send social security numbers over https...",
+        id: "block_ssn_germany",
+        category: "dlp",
+        version: 1,
+        property: "system",
+        isEnabled: true,
+        websites: [ 
+              {
+                request: "POST",
+                form: [
+                    {
+                        "name": "Günter Müller",
+                        "sno": "12-190367-K-05-6",
+                    },
+                    {
+                        "name": "Günter Müller",
+                        "sno": "12 190367 K 05 6",
+                    },
+                    {
+                        "name": "Peter Meier",
+                        "sno": "66150872P080",
+                    },
+                    {
+                        "name": "Christian Schmidt",
+                        "sno": "12 123456 M 123"
+                    }
+                ],
+                url: "https://httpbin.org/post",
+                code: 403
+              }, 
+              {
+                request: "POST",
+                form: [],
+                url: "https://httpbin.org/post",
+                code: 200
+              },
+              {
+                url: "https://httpbin.org/",
+                code: 200
+              }
+       ]
+     },
+
      {
         title: "Not allow searching Video's (example Vimeo)",
         desc: "This test checks if searching videos on Vimeo get blocked and if other functionalities still work.",
@@ -318,17 +408,17 @@ const faqConfig = [
         title: "What does 'Blocked', 'Blocked but...', 'Unblocked or 'Error'  mean after test has been executed?",
         detail: `If test has a state:<br><br>
             <ul>
-                <li><strong>Blocked</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS, meaning it got blocked. It double checks that 403 has sent the message.</li>
+                <li><strong>Blocked</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS, meaning it got blocked. It double checks that 403 has been received as a message from VMWare CWS.</li>
                 <li><strong>Blocked but...</strong> it means the extension received a HTTP 403 (Forbidden) message from VMware CWS for the main url test-case; however, other urls in the test-case received a different HTTP code as expected. For example, the Vimeo test-case under CASB tries to test of if search is getting blocked and if other parts of Vimeo are still working as expectged. If URL filtering is used to block Vimeo then all the urls will not get blocked, which means, yes searching got blocked but everything else as well - which is not what was expected.</li>
                 <li><strong>Unblocked</strong> it means the extension received HTTP 200 (OK). Either configuration was not applied correct or the content bypassed CWS.</li>
-                <li><strong>Error</strong> it means any other response status which is not 403 or 200 has been received. This could be caused by many factors, e.g. the testing site is unreachable (404) or another security enforcement has protected one. Please try again later and if it occurs again please fill in a ticket.</li>
+                <li><strong>Error</strong> it means any other response status which is not 403 or 200 has been received. This could be caused by many factors, e.g. the testing site is unreachable or another security enforcement has protected one. Please try again later and if it occurs again please fill in a ticket.</li>
             </ul>
         `,
         isEnabled: true
     },
     {
         title: "Can I change the test URLs used?",
-        detail: "<strong>Yes</strong>, one can edit the <code>js/vmchecker.config.js</code> to not only alter the URLs but add/delete tests. In the future, I will add a option page to the extension to be able to alter URLs accordingly.",
+        detail: "<strong>Yes</strong>, please use the extension 'Config' page to do such.",
         isEnabled: true
 
     },
