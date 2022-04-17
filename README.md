@@ -1,12 +1,12 @@
 <p align="center">
-  <img src="https://github.com/iddocohen/vmware-sase-check/blob/main/icon/icon128-white.png" width="75" height="75"/>
+  <img src="https://github.com/iddocohen/vmware-sase-check/blob/main/src/icon/icon128-white.png" width="75" height="75"/>
 </p>
 
 <h1 align="center">VMware Cloud Web Security (CWS) Checker</h1>
 
 *VMware CWS Checker is a web browser extension to help check your security with (or even without) VMware CWS service*
 
-<img src="https://github.com/iddocohen/vmware-sase-check/blob/main/screenshot/Overview-google.png?raw=true" alt="Overview of VMware CWS Checker">
+<img src="https://github.com/iddocohen/vmware-sase-check/blob/main/src/screenshot/Overview-google.png?raw=true" alt="Overview of VMware CWS Checker">
 
 ## Releases
 
