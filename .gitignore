@@ -6,4 +6,5 @@
 *.mov
 *.dev
 *.zip
+.env-*
 .env
