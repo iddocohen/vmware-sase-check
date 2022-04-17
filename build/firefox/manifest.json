@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "VMware CWS Checker",
+  "description": "Auto test performance and security enforcement against VMware Cloud Web Security (CWS) offering.",
+  "version": "0.22",
+  "author": "Iddo Cohen",
+  "incognito":"split",
+  "icons": { 
+        "16": "icon/icon16-white.png",
+        "48": "icon/icon48-white.png",
+        "128": "icon/icon128-white.png" 
+  },
+  "browser_action": {
+    "default_icon": "icon/icon16-white.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "background": {
+    "page": "vmchecker.background.html",
+    "persistent": false
+  }
+}
