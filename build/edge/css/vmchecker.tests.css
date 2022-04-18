@@ -1,0 +1,164 @@
+.container {
+  margin-top: 50px;
+}
+.card-header-custom {
+  border-radius: .25rem .25rem 0 0;
+  padding: .75rem 1.25rem;
+  background-color: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-bottom: none;
+}
+.card-footer-custom {
+  border-radius: 0 0 .25rem .25rem;
+  padding: .75rem 1.25rem;
+  background-color: #f5f5f5;
+  border: 1px solid #e5e5e5;
+  border-top: none;
+}
+.card-header-custom + .card-group > .card {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.card-footer-custom + .card-group > .card {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+#inner-message {
+    margin: 0 auto;
+    width: 50%;
+}
+
+.top4 { margin-top:4px; }
+.top5 { margin-top:5px; }
+.top7 { margin-top:7px; }
+.top10 { margin-top:10px; }
+.top15 { margin-top:15px; }
+.top17 { margin-top:17px; }
+.top30 { margin-top:30px; }
+
+.bottom5 { margin-bottom:5px; }
+.bottom7 { margin-bottom:7px; }
+.bottom10 { margin-bottom:10px; }
+.bottom15 { margin-bottom:15px; }
+.bottom17 { margin-bottom:17px; }
+.bottom30 { margin-bottom:30px; }
+
+
+.right5 { margin-right:5px; }
+.right7 { margin-right:7px; }
+.right10 { margin-right:10px; }
+.right15 { margin-right:15px; }
+.right17 { margin-right:17px; }
+.right30 { margin-right:30px; }
+
+.left5 { margin-left:5px; }
+.left7 { margin-left:7px; }
+.left10 { margin-left:10px; }
+.left15 { margin-left:15px; }
+.left17 { margin-left:17px; }
+.left30 { margin-left:30px; }
+
+
+.help-tip{
+    position: absolute;
+    top: 10px;
+    right: 18px;
+    text-align: center;
+    background-color: #BCDBEA;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    line-height: 26px;
+    cursor: default;
+}
+
+.help-tip:before{
+    content:'?';
+    font-weight: bold;
+    color:#fff;
+}
+
+.help-tip:hover p{
+    display:block;
+    transform-origin: 100% 0%;
+
+    -webkit-animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.3s ease-in-out;
+
+}
+
+.help-tip p{    /* The tooltip */
+    display: none;
+    text-align: left;
+    background-color: #1E2021;
+    padding: 20px;
+    width: 300px;
+    position: absolute;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+    right: -4px;
+    color: #FFF;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.help-tip p:before{ /* The pointer of the tooltip */
+    position: absolute;
+    content: '';
+    width:0;
+    height: 0;
+    border:6px solid transparent;
+    border-bottom-color:#1E2021;
+    right:10px;
+    top:-12px;
+}
+
+.help-tip p:after{ /* Prevents the tooltip from being hidden */
+    width:100%;
+    height:40px;
+    content:'';
+    position: absolute;
+    top:-40px;
+    left:0;
+}
+
+.modal-dialog,
+.modal-content {
+    /* 80% of window height */
+    height: 80%;
+}
+
+.modal-body {
+    /* 100% = dialog height, 120px = header + footer */
+    max-height: calc(100% - 120px);
+}
+
+/* CSS animation */
+
+@-webkit-keyframes fadeIn {
+    0% { 
+        opacity:0; 
+        transform: scale(0.6);
+    }
+
+    100% {
+        opacity:100%;
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    0% { opacity:0; }
+    100% { opacity:100%; }
+}
+
+
+
