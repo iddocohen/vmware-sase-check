@@ -11,6 +11,7 @@ echo -n "Creating directories... "
 mkdir "build"
 mkdir "build/firefox"
 mkdir "build/chromium"
+mkdir "build/edge"
 echo "Done!"
 
 # Add warnings
@@ -27,6 +28,19 @@ mv "build/firefox/manifest-firefox.json" "build/firefox/manifest.json"
 mv "build/firefox/.env-firefox" "build/firefox/.env"
 mv "build/firefox/package-firefox.sh" "build/firefox/package.sh"
 echo "Done!"
+
+# Build Edge
+# TODO: Create new files for edge in source
+echo -n "Creating Edge files... "
+cp -r "src/." "build/edge/"
+rm -f "build/edge/manifest-chromium.json"
+rm -f "build/edge/.env-chromium"
+rm -f "build/edge/package-chromium.sh"
+mv "build/edge/manifest-firefox.json" "build/edge/manifest.json"
+mv "build/edge/.env-firefox" "build/edge/.env"
+mv "build/edge/package-firefox.sh" "build/edge/package.sh"
+echo "Done!"
+
 
 # Build Chromium
 echo -n "Creating Chromium files... "
