@@ -1,4 +1,5 @@
 <p align="center">
+  <img src="src/icon/icon128-white.png" width="75" height="75"/>
   <img src="https://github.com/iddocohen/vmware-sase-check/blob/main/src/icon/icon128-white.png" width="75" height="75"/>
 </p>
 
