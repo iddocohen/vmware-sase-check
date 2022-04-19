@@ -1,5 +1,22 @@
 #!/bin/bash -e
 
+build() {
+    NAME=$1
+    echo -n "Creating $NAME files... "
+    cp -r "src/js/" "build/$NAME/"
+    cp -r "src/icon/" "build/$NAME/"
+    cp -r "src/css/" "build/$NAME/"
+    cp "src/vmchecker.background.html" "build/$NAME/"
+    cp "src/vmchecker.tests.html" "build/$NAME/"
+    cp "src/.env-$NAME" "build/$NAME/"
+    cp "src/manifest-$NAME.json" "build/$NAME/"
+    cp "src/package-$NAME.sh" "build/$NAME/"
+    mv "build/$NAME/manifest-$NAME.json" "build/$NAME/manifest.json"
+    mv "build/$NAME/.env-$NAME" "build/$NAME/.env"
+    mv "build/$NAME/package-$NAME.sh" "build/$NAME/package.sh"
+    echo "Done!"
+}
+
 # Clean old build files
 echo "Starting build..."
 echo -n "Cleaning old builds... "
@@ -19,38 +36,14 @@ touch "build/DO NOT EDIT THESE FILES DIRECTLY"
 touch "build/EDIT THE FILES IN THE SRC DIRECTORY AND RUN BUILD AGAIN"
 
 # Build Firefox
-echo -n "Creating Firefox files... "
-cp -r "src/." "build/firefox/"
-rm -f "build/firefox/manifest-chromium.json"
-rm -f "build/firefox/.env-chromium"
-rm -f "build/firefox/package-chromium.sh"
-mv "build/firefox/manifest-firefox.json" "build/firefox/manifest.json"
-mv "build/firefox/.env-firefox" "build/firefox/.env"
-mv "build/firefox/package-firefox.sh" "build/firefox/package.sh"
-echo "Done!"
+build firefox
 
 # Build Edge
-# TODO: Create new files for edge in source
-echo -n "Creating Edge files... "
-cp -r "src/." "build/edge/"
-rm -f "build/edge/manifest-chromium.json"
-rm -f "build/edge/.env-chromium"
-rm -f "build/edge/package-chromium.sh"
-mv "build/edge/manifest-firefox.json" "build/edge/manifest.json"
-mv "build/edge/.env-firefox" "build/edge/.env"
-mv "build/edge/package-firefox.sh" "build/edge/package.sh"
-echo "Done!"
-
+build edge
 
 # Build Chromium
-echo -n "Creating Chromium files... "
-cp -r "src/." "build/chromium/"
-rm -f "build/chromium/manifest-firefox.json"
-rm -f "build/chromium/.env-firefox"
-rm -f "build/chromium/package-firefox.sh"
+build chromium
+# Deleting unneeded files for Chrome
 rm -f "build/chromium/vmchecker.background.html"
-mv "build/chromium/manifest-chromium.json" "build/chromium/manifest.json"
-mv "build/chromium/.env-chromium" "build/chromium/.env"
-mv "build/chromium/package-chromium.sh" "build/chromium/package.sh"
-echo "Done!"
+
 echo "Build complete!"
