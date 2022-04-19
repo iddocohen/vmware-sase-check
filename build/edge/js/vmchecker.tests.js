@@ -38,7 +38,7 @@ function Timer () {
     }
 }
 
-// Basic Stats Class with sum, mean, std, median, 25% precentitle and 75% precentitle
+// Basic Stats Class with sum, mean, std, median, 25% percentile and 75% percentile
 //TODO: Make it better... create and then delete, really?!
 function Stats (oarr) {
     let arr = [...oarr];
@@ -128,6 +128,11 @@ async function doAjax(url, obj={type: undefined, request:undefined, payload:unde
         ajaxFinal = {
             ...ajaxBase, 
             dataType: datatype,
+            /* TODO: Investigate maybe if the below is better for caching
+            data: {
+                "rand": new Date().getTime()
+            },
+            */
             timeout: 5000
         };
     } else if (type === "POST") {
@@ -140,7 +145,7 @@ async function doAjax(url, obj={type: undefined, request:undefined, payload:unde
     }
 
     try {
-        // Putting everything in separte XHR to get a bit more information
+        // Putting everything in separate XHR to get a bit more information
         await $.ajax(ajaxFinal);
     } catch (e) {
        //error(e)
