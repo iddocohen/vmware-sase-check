@@ -17,8 +17,11 @@ build() {
     echo "Done!"
 }
 
+NOW=$(date +"%T")
+
 # Clean old build files
 echo "Starting build..."
+echo "Current time : $NOW"
 echo -n "Cleaning old builds... "
 rm -r -f "build"
 echo "Done!"

@@ -600,6 +600,111 @@ function createFaqPage() {
     }
 }
 
+function createSpecPage() {
+    //https://stackoverflow.com/questions/13686470/how-can-i-convert-numeric-http-status-code-to-its-display-name-in-javascript 
+    let friendlyHttpStatus = {
+        '200': 'OK',
+        '201': 'Created',
+        '202': 'Accepted',
+        '203': 'Non-Authoritative Information',
+        '204': 'No Content',
+        '205': 'Reset Content',
+        '206': 'Partial Content',
+        '300': 'Multiple Choices',
+        '301': 'Moved Permanently',
+        '302': 'Found',
+        '303': 'See Other',
+        '304': 'Not Modified',
+        '305': 'Use Proxy',
+        '306': 'Unused',
+        '307': 'Temporary Redirect',
+        '400': 'Bad Request',
+        '401': 'Unauthorized',
+        '402': 'Payment Required',
+        '403': 'Forbidden',
+        '404': 'Not Found',
+        '405': 'Method Not Allowed',
+        '406': 'Not Acceptable',
+        '407': 'Proxy Authentication Required',
+        '408': 'Request Timeout',
+        '409': 'Conflict',
+        '410': 'Gone',
+        '411': 'Length Required',
+        '412': 'Precondition Required',
+        '413': 'Request Entry Too Large',
+        '414': 'Request-URI Too Long',
+        '415': 'Unsupported Media Type',
+        '416': 'Requested Range Not Satisfiable',
+        '417': 'Expectation Failed',
+        '418': 'I\'m a teapot',
+        '429': 'Too Many Requests',
+        '500': 'Internal Server Error',
+        '501': 'Not Implemented',
+        '502': 'Bad Gateway',
+        '503': 'Service Unavailable',
+        '504': 'Gateway Timeout',
+        '505': 'HTTP Version Not Supported',
+    };
+    function descMethod(obj){
+      let ret = "<br><br>This is done by calling the following: <br><br>";
+      for (let i=0; i < obj.websites.length; ++i) {
+         let o = obj.websites[i];
+         let request = o.request || "GET";
+         ret += `${i+1}. <strong>${o.url}</strong> via a <strong>${request}</strong> method and expecting status <strong>${o.code}(${friendlyHttpStatus[o.code]})</strong> to be returned.`;
+         if (request === "POST") {
+            ret += `It was send with the following payload: <strong>${JSON.stringify(o.form)}</strong>`;
+         }
+         ret += "<br><br>";
+      }
+      /*
+      for (var i=0; i < obj.websites.length; ++i) {
+         let o = obj.websites[i];
+         let request = o.request || "GET";
+         if (request === "POST") {
+             if (o.form.length == 0){
+                ret += `URL at <strong>${i+1}</strong> used <strong>empty</strong> payload in its request.`; 
+             } else {
+                ret += `URL at <strong>${i+1}</strong> used the following <strong>${JSON.stringify(o.form)}</strong> payload in its request.<br>`;
+             }
+         }
+      }
+      if (i > 0 ){
+        ret += "<br><br>";
+      }
+      */
+      if (obj.websites.length > 1){
+        ret += "<strong>NOTE</strong>: There are several security methodologies to remediate breaches. This test tries to evaluate if the 'right' security remediation has been configured by evaluating if only the malicous content has been blocked. That is why several URLs are called with the expectations that some will be reachable but some will get blocked.<br><br>";
+      }
+      return ret;
+    }
+    let initHtml = `
+        <div class="row"><br><br></div>
+        <div class="top30">
+            <table class="table" id="tableTestSpec">
+                <thead><tr>
+                    <th scope="col">Threat</th>
+                    <th scope="col">Test Description</th>
+                    <th scope="col">Possible Remediation Guidelines</th>
+                </tr></thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    `;
+    $(document.body).append(initHtml);
+    for (let i=0; i < defaultTestConfig.length; ++i) { 
+       let o = defaultTestConfig[i];
+       let method = descMethod(o);  
+       let row = `
+          <tr>
+            <td>${o.title}</td>
+            <td>${o.desc} ${method}</td>
+            <td>${o.how}</td>
+          </tr>
+       `; 
+       $("#tableTestSpec tbody").append(row);
+    }
+}
 
 
 function createOptionsPage() {
@@ -926,7 +1031,7 @@ function createOptionsPage() {
             }
         }).get();
         await setStorageData({testingDomains:newTestingDomains});
-        displayPage("config"); 
+        displayPage("navConfig"); 
     });
     
     $('#testingDomainsAdd').on('click', function() {
@@ -1078,7 +1183,7 @@ function createOptionsPage() {
         }
 
         await setStorageData({testConfig: newTestConfig});
-        displayPage("config");
+        displayPage("navConfig");
      });
      
      $('.btn').on('click', async function() {
@@ -1093,7 +1198,7 @@ function createOptionsPage() {
          } else if ($(this).attr('id') == "restOverallConfiguration") {
             await clearStorageData();
             await setConfig();
-            displayPage("config");
+            displayPage("navConfig");
          } else if ($(this).attr('id') == "showOverallConfiguration") {
             let str = JSON.stringify(testConfig, undefined, 4);
             $("#modalInputTestConfig").val(str);
@@ -1112,17 +1217,17 @@ function createOptionsPage() {
 
             if (Object.keys(newTestConfig).length !== 0) {
                 await setStorageData({testConfig: newTestConfig});
-                displayPage("config");
+                displayPage("navConfig");
             }
          } else if ($(this).attr('id') === "modalCancelTestConfig" || $(this).attr('id') === "modalDiscardTestConfig") {
-             displayPage("config");
+             displayPage("navConfig");
          } else {
              let [property, arrIndex, action] = $(this).attr('id').split('_');
              switch(action) {
                 case "delete": 
                     testConfig.splice(arrIndex,1);
                     await setStorageData({testConfig: testConfig});
-                    displayPage("config");
+                    displayPage("navConfig");
                     break;
                 case "switch":
                     //const buttonText = $(this).text().trim();
@@ -1133,7 +1238,7 @@ function createOptionsPage() {
                         testConfig[arrIndex].isEnabled = true;
                     }
                     await setStorageData({testConfig: testConfig});
-                    displayPage("config");
+                    displayPage("navConfig");
                     break;
                 case "edit":
                     $("#testConfigEdit form").remove();
@@ -1147,10 +1252,13 @@ function createOptionsPage() {
 async function displayPage(page) {
     $('nav').nextAll().remove();
     switch (page) {
-        case "faq":
+        case "navFAQ":
             createFaqPage();
             break;
-        case "config":
+        case "navSpec":
+            createSpecPage();
+            break;
+        case "navConfig":
             await setConfig();
             createOptionsPage();
             break;
@@ -1273,7 +1381,8 @@ $(window).bind("load", function () {
     $('.nav-link').on('click', function() {
         const linkClicked = $(this);
         if (!linkClicked.prop('href').includes('#')) { return 0 }; 
-        const page = linkClicked.text().toLowerCase();
+        const page = linkClicked.attr('id');
+        //const page = linkClicked.text().toLowerCase();
         displayPage(page);
     });
 });
