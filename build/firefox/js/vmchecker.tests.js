@@ -309,12 +309,15 @@ async function doTesting(sites) {
         let payload                 = "";
         if (request === "POST") {
                payload = new FormData();
+               /*
                for (let j = 0; j < sites[i].form.length; ++j){
                     let o = sites[i].form[j]; 
                     for (const [key, value] of Object.entries(o)) {
                         payload.append(key,value);
                     }
                }
+               */
+               payload.append("text", JSON.stringify(sites[i].form));
                // To trigger VMware DLPs for user-input one needs to have a minimum of 1KB as payload - generating 1KB string and add it to existing content.
                // TODO: Determine actual size of formData and generate a total of 1KB only. 
                //payload.append("_random_data_", randomId(1024 - 151 - getFormDataSize(payload))); 
@@ -645,33 +648,25 @@ function createSpecPage() {
         '504': 'Gateway Timeout',
         '505': 'HTTP Version Not Supported',
     };
+    function categoryToHuman (category) {
+        for (let i=0; i < existingCategories.length; ++i) {
+            let o = existingCategories[i];
+            if (o.id === category) {
+                return o.humanReadable;
+            }
+        }
+    };
     function descMethod(obj){
       let ret = "<br><br>This is done by calling the following: <br><br>";
       for (let i=0; i < obj.websites.length; ++i) {
          let o = obj.websites[i];
          let request = o.request || "GET";
-         ret += `${i+1}. <strong>${o.url}</strong> via a <strong>${request}</strong> method and expecting status <strong>${o.code}(${friendlyHttpStatus[o.code]})</strong> to be returned.`;
+         ret += `<strong>${o.url}</strong><br> via a <strong>${request}</strong> method and expecting status <strong>${o.code}(${friendlyHttpStatus[o.code]})</strong> to be returned.`;
          if (request === "POST") {
-            ret += `It was send with the following payload: <strong>${JSON.stringify(o.form)}</strong>`;
+            ret += `<br>It was send with the following payload: <strong>${JSON.stringify(o.form)}</strong>`;
          }
          ret += "<br><br>";
       }
-      /*
-      for (var i=0; i < obj.websites.length; ++i) {
-         let o = obj.websites[i];
-         let request = o.request || "GET";
-         if (request === "POST") {
-             if (o.form.length == 0){
-                ret += `URL at <strong>${i+1}</strong> used <strong>empty</strong> payload in its request.`; 
-             } else {
-                ret += `URL at <strong>${i+1}</strong> used the following <strong>${JSON.stringify(o.form)}</strong> payload in its request.<br>`;
-             }
-         }
-      }
-      if (i > 0 ){
-        ret += "<br><br>";
-      }
-      */
       if (obj.websites.length > 1){
         ret += "<strong>NOTE</strong>: There are several security methodologies to remediate breaches. This test tries to evaluate if the 'right' security remediation has been configured by evaluating if only the malicous content has been blocked. That is why several URLs are called with the expectations that some will be reachable but some will get blocked.<br><br>";
       }
@@ -679,12 +674,12 @@ function createSpecPage() {
     }
     let initHtml = `
         <div class="row"><br><br></div>
-        <div class="top30">
-            <table class="table" id="tableTestSpec">
+        <div class="container-lg top30">
+            <table class="table table-striped" id="tableTestSpec">
                 <thead><tr>
                     <th scope="col">Threat</th>
                     <th scope="col">Test Description</th>
-                    <th scope="col">Possible Remediation Guidelines</th>
+                    <th scope="col">Remediation Guidelines</th>
                 </tr></thead>
                 <tbody>
                 </tbody>
@@ -693,13 +688,15 @@ function createSpecPage() {
     `;
     $(document.body).append(initHtml);
     for (let i=0; i < defaultTestConfig.length; ++i) { 
-       let o = defaultTestConfig[i];
-       let method = descMethod(o);  
+       const o = defaultTestConfig[i];
+       const method = descMethod(o);  
+       const category = categoryToHuman(o.category);
+       //const output = o.how.replace(/(?:[^\s.]+\s+){5}|\./g,'$&\n' );
        let row = `
           <tr>
             <td>${o.title}</td>
             <td>${o.desc} ${method}</td>
-            <td>${o.how}</td>
+            <td>Under category: <strong>${category}</strong><br><br>${o.how}</td>
           </tr>
        `; 
        $("#tableTestSpec tbody").append(row);
