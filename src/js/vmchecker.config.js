@@ -214,6 +214,7 @@ const defaultTestConfig = [
                         "k3": "4916-4811-5814-8111"
                     }
                 ],
+                type: "pdf",
                 url: "https://httpbin.org/post",
                 code: 403
               }, 
