@@ -140,6 +140,7 @@ async function doAjax(url, obj={type: undefined, request:undefined, payload:unde
             ...ajaxBase, 
             processData: false,
             contentType: false,
+            //contentType: 'application/x-www-form-urlencoded; charset=utf-8',
             data: payload
         };
     }
@@ -659,16 +660,17 @@ function createSpecPage() {
     function descMethod(obj){
       let ret = "<br><br>This is done by calling the following: <br><br>";
       for (let i=0; i < obj.websites.length; ++i) {
-         let o = obj.websites[i];
-         let request = o.request || "GET";
-         ret += `<strong>${o.url}</strong><br> via a <strong>${request}</strong> method and expecting status <strong>${o.code}(${friendlyHttpStatus[o.code]})</strong> to be returned.`;
+         const o = obj.websites[i];
+         const request = o.request || "GET";
+         let url = o.url;
+         if (i >= 1) {
+             url = "<strong><sup><a href='#testSpecRef1'>[1]</a></sup></strong> "+o.url;
+         }
+         ret += `<strong>${url}</strong><br> via a <strong>${request}</strong> method and expecting status <strong>${o.code}(${friendlyHttpStatus[o.code]})</strong> to be returned.`;
          if (request === "POST") {
-            ret += `<br>It was send with the following payload: <strong>${JSON.stringify(o.form)}</strong>`;
+            ret += `<br>It was send with the following payload: <strong>${JSON.stringify(o.form)}<sup><a href='#testSpecRef2'>[2]</a></sup></strong>`;
          }
          ret += "<br><br>";
-      }
-      if (obj.websites.length > 1){
-        ret += "<strong>NOTE</strong>: There are several security methodologies to remediate breaches. This test tries to evaluate if the 'right' security remediation has been configured by evaluating if only the malicous content has been blocked. That is why several URLs are called with the expectations that some will be reachable but some will get blocked.<br><br>";
       }
       return ret;
     }
@@ -676,7 +678,7 @@ function createSpecPage() {
         <div class="row"><br><br></div>
         <div class="container-lg top30">
             <table class="table table-striped" id="tableTestSpec">
-                <thead><tr>
+                <thead class="thead-light"><tr>
                     <th scope="col">Threat</th>
                     <th scope="col">Test Description</th>
                     <th scope="col">Remediation Guidelines</th>
@@ -684,6 +686,10 @@ function createSpecPage() {
                 <tbody>
                 </tbody>
             </table>
+            <div class="row g-3">
+                <span><a name="testSpecRef1"><strong><sup>[1]</sup></strong> There are several security methodologies to remediate breaches. This test tries to evaluate if the 'right' security remediation has been configured by evaluating if only the malicous content has been blocked. That is why several URLs are called with the expectations that some will be reachable but some will get blocked.</span></a>
+                <span><a name="testSpecRef2"><strong><sup>[2]</sup></strong> The payload is getting encapsulated in a filed called 'text' and passed via webform object.</a></span>            
+            </div>
         </div>
     `;
     $(document.body).append(initHtml);
@@ -696,7 +702,7 @@ function createSpecPage() {
           <tr>
             <td>${o.title}</td>
             <td>${o.desc} ${method}</td>
-            <td>Under category: <strong>${category}</strong><br><br>${o.how}</td>
+            <td><strong>${category}</strong><br><br>${o.how}</td>
           </tr>
        `; 
        $("#tableTestSpec tbody").append(row);
