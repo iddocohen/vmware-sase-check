@@ -265,7 +265,7 @@ async function checkCWS(dom_process, dom_mean, dom_std, dom_quantitle) {
                 text(`${stats.q75}s | ${stats.median}s | ${stats.q25}s`, dom_quantitle);
 
                 if (behindCWS) {
-                    text (`You are behind VMware CWS. The IP you are using is ${behindCWStext} which resides in ${geoCity} (± ${geoAccr}km).`, dom_process, "html");
+                    text (`You are behind VMware CWS.<br>The IP you have used is ${behindCWStext} which resides in ${geoCity} (± ${geoAccr}km).`, dom_process, "html");
                 } else {
                     displayMessage(behindCWSerror);
                     text (behindCWStext, dom_process, "html");
@@ -362,7 +362,7 @@ function progressBar(sum, count){
     let num = round((count / sum) * 100);
     $(".progress-bar").css("width", num+"%");
     $(".progress-bar").attr("aria-valuenow", num);
-    $(".progress-bar").text(num+"%"+" ("+count+"/"+sum+")");
+    $(".progress-bar").text(`${count}/${sum} (${num}%)` );
 }
 
 function changeButton(object, text, css="primary") {
@@ -392,25 +392,25 @@ function createTestPage () {
         <div class="row top30">
           <div class="col">
             <div class="card-header-custom d-md-flex align-items-center justify-content-between">
-                <h4 class="card-title">Check connectivity and performance</h4>
+                <h4 class="card-title">Check connectivity and performance of HTTP</h4>
             </div>
             <div class="card-group">
                 <div class="card text-center">
                   <div class="card-body">
                     <h4 class="card-title" id="stats_mean">0 s</h4>
-                    <p class="card-text">(Average response time)</p>
+                    <p class="card-text">(Average HTTP response time)</p>
                   </div>
                 </div>
                 <div class="card text-center">
                   <div class="card-body">
                     <h4 class="card-title" id="stats_std">0 s</h4>
-                    <p class="card-text">(Standard deviation from response times)</p>
+                    <p class="card-text">(Standard deviation from HTTP response times)</p>
                   </div>
                 </div>
                 <div class="card text-center">
                   <div class="card-body">
                     <h4 class="card-title" id="stats_quantitle">0 s</h4>
-                    <p class="card-text">(75% | 50% | 25% percentile from response times)</p>
+                    <p class="card-text">(75% | 50% | 25% percentile from HTTP response times)</p>
                   </div>
                 </div>
             </div>
@@ -538,7 +538,7 @@ function createTestPage () {
                         if (isBlocked == true && code >= 100) {
                             $(button).attr("data-tested","blocked");
                             changeButton(button, "Blocked", "success");
-                            $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
+                            $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. HTTP response time was <strong>${rtt}s</strong>`);
                         }else if (isBlocked == false && code >= 100) {
                             // Main website got blocked but other domain parts might have a wrong state, as it got blocked not like the test-case intended to.  
                             //TODO: To be more specific on if other URLs really got blocked by CWS or by other security. 
@@ -546,18 +546,18 @@ function createTestPage () {
                                 $(button).attr("data-tested","blocked-differently");
                                 changeButton(button, "Blocked but...", "warning");
                                 $(bodyText).html(`Several URLs for given test-case are used for testing. The main URL '${url}' got blocked from CWS but the other URLs returned unexpected return HTTP code, which indicates a wrong configuration. Please double check the configuration.`);
-                                $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. Response time was <strong>${rtt}s</strong>`);
+                                $(footerText).html(`Category identified by CWS as <strong>${data}</strong>. HTTP response time was <strong>${rtt}s</strong>`);
                             } else {
                                 $(button).attr("data-tested","unblocked");
                                 changeButton(button, "Unblocked", "danger");
                                 $(bodyText).html(failMessage);
-                                $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
+                                $(footerText).html(`HTTP response time was <strong>${rtt}s</strong>`);
                             }
                         } else {
                             $(button).attr("data-tested","error");
                             changeButton(button, "Error", "danger");
                             $(bodyText).html("<strong>"+msg+"</strong>");
-                            $(footerText).html(`Response time was <strong>${rtt}s</strong>`);
+                            $(footerText).html(`HTTP response time was <strong>${rtt}s</strong>`);
                         }
                         let length = 0;
                         for (var i=testConfig.length; i--;) {
@@ -695,6 +695,7 @@ function createSpecPage() {
     $(document.body).append(initHtml);
     for (let i=0; i < defaultTestConfig.length; ++i) { 
        const o = defaultTestConfig[i];
+       if (!o.isEnabled) { continue };
        const method = descMethod(o);  
        const category = categoryToHuman(o.category);
        //const output = o.how.replace(/(?:[^\s.]+\s+){5}|\./g,'$&\n' );

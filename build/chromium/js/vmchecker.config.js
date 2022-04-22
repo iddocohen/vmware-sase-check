@@ -209,16 +209,9 @@ const defaultTestConfig = [
                 request: "POST",
                 form: [
                     {
-                        "name": "Robert Aragon",
-                        "cc_card": "4929-3813-3266-4295",
-                    },
-                    {
-                        "name": "Ashley Borden",
-                        "cc_card": "5370-4638-8881-3020",
-                    },
-                    {
-                        "name": "Thomas Conley",
-                        "cc_card": "4916-4811-5814-8111"
+                        "k1": "4929-3813-3266-4295",
+                        "k2": "5370-4638-8881-3020",
+                        "k3": "4916-4811-5814-8111"
                     }
                 ],
                 url: "https://httpbin.org/post",
@@ -228,10 +221,6 @@ const defaultTestConfig = [
                 request: "POST",
                 form: [],
                 url: "https://httpbin.org/post",
-                code: 200
-              },
-              {
-                url: "https://httpbin.org/",
                 code: 200
               }
        ]
@@ -253,16 +242,9 @@ const defaultTestConfig = [
                 request: "POST",
                 form: [
                     {
-                        "name": "Robert Aragon",
-                        "cc_card": "4929-3813-3266-4295",
-                    },
-                    {
-                        "name": "Ashley Borden",
-                        "cc_card": "5370-4638-8881-3020",
-                    },
-                    {
-                        "name": "Thomas Conley",
-                        "cc_card": "4916-4811-5814-8111"
+                        "k1": "4929-3813-3266-4295",
+                        "k2": "5370-4638-8881-3020",
+                        "k3": "4916-4811-5814-8111"
                     }
                 ],
                 url: "http://httpbin.org/post",
@@ -272,10 +254,6 @@ const defaultTestConfig = [
                 request: "POST",
                 form: [],
                 url: "http://httpbin.org/post",
-                code: 200
-              },
-              {
-                url: "http://httpbin.org/",
                 code: 200
               }
        ]
@@ -320,10 +298,6 @@ const defaultTestConfig = [
                 request: "POST",
                 form: [],
                 url: "https://httpbin.org/post",
-                code: 200
-              },
-              {
-                url: "https://httpbin.org/",
                 code: 200
               }
        ]
