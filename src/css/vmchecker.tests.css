@@ -161,4 +161,10 @@
 }
 
 
+sup, sub {
+   position: relative;
+   vertical-align: baseline;
+   top: -0.4em;
+}
+sub { top: 0.4em; }
 
