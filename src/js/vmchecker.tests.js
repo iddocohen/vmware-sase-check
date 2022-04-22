@@ -688,7 +688,7 @@ function createSpecPage() {
             </table>
             <div class="row g-3">
                 <span><a name="testSpecRef1"><strong><sup>[1]</sup></strong> There are several security methodologies to remediate breaches. This test tries to evaluate if the 'right' security remediation has been configured by evaluating if only the malicous content has been blocked. That is why several URLs are called with the expectations that some will be reachable but some will get blocked.</span></a>
-                <span><a name="testSpecRef2"><strong><sup>[2]</sup></strong> The payload is getting encapsulated in a filed called 'text' and passed via webform object.</a></span>            
+                <span><a name="testSpecRef2"><strong><sup>[2]</sup></strong> The payload is getting encapsulated in a field called 'text' and passed via webform object.</a></span>            
             </div>
         </div>
     `;
