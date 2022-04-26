@@ -207,20 +207,14 @@ const defaultTestConfig = [
         websites: [ 
               {
                 request: "POST",
-                form: [
-                    {
-                        "k1": "4929-3813-3266-4295",
-                        "k2": "5370-4638-8881-3020",
-                        "k3": "4916-4811-5814-8111"
-                    }
-                ],
-                type: "pdf",
+                form: "credit card 4929-3813-3266-4295 visa 5370-4638-8881-3020 4916-4811-5814-8111",
+                convertTo: "pdf",
                 url: "https://httpbin.org/post",
                 code: 403
               }, 
               {
                 request: "POST",
-                form: [],
+                form: "",
                 url: "https://httpbin.org/post",
                 code: 200
               }
@@ -241,19 +235,14 @@ const defaultTestConfig = [
         websites: [ 
               {
                 request: "POST",
-                form: [
-                    {
-                        "k1": "4929-3813-3266-4295",
-                        "k2": "5370-4638-8881-3020",
-                        "k3": "4916-4811-5814-8111"
-                    }
-                ],
+                form: "credit card 4929-3813-3266-4295 visa 5370-4638-8881-3020 4916-4811-5814-8111",
+                convertTo: "pdf",
                 url: "http://httpbin.org/post",
                 code: 403
               }, 
               {
                 request: "POST",
-                form: [],
+                form: "",
                 url: "http://httpbin.org/post",
                 code: 200
               }

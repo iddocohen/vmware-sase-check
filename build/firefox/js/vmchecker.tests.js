@@ -80,6 +80,9 @@ function Stats (oarr) {
 }
 
 async function doAjax(url, obj={type: undefined, request:undefined, payload:undefined}) {
+    // Here a very good article explaining why I cannot use performance.time in XHR domain. https://www.dynatrace.com/support/help/how-to-use-dynatrace/real-user-monitoring/basic-concepts/user-actions
+    // This one is good as well https://web.dev/ttfb/
+    // Question however is how does Google Chrome do it anyway?
     let ret = [];
     let time;
 
@@ -332,20 +335,24 @@ async function doTesting(sites) {
         //TODO: Support files in the future and not only user input
         let payload                 = null;
         if (request === "POST") {
-               const type                    = sites[i].type    || "user"; 
-               if (type === "user") {
+               const convertTo                    = sites[i].convertTo    || "user"; 
+               let paddingPayload = "";
+               const strPayload = JSON.stringify(sites[i].form);
+               if (convertTo === "user") {
+                        paddingPayload = " ".repeat(1024);
                         payload = new FormData();
-                        payload.append("text", JSON.stringify(sites[i].form));
+                        payload.append("text", strPayload);
                         // To trigger VMware DLPs for user-input one needs to have a minimum of 1KB as payload - generating 1KB string and add it to existing content.
                         // TODO: Determine actual size of formData and generate a total of 1KB only. 
                         //payload.append("_random_data_", randomId(1024 - 151 - getFormDataSize(payload))); 
                         //payload.append("_random_data_", randomId(1024)); 
-                        payload.append("_random_data_", "x".repeat(1024));
-               } else if (type === "pdf") {
+                        payload.append("padding", paddingPayload);
+               } else if (convertTo === "pdf") {
+                        paddingPayload = " ".repeat(1024*5);
                         let jsPDF = window.jspdf.jsPDF;
                         const pdf = new jsPDF();
-                        pdf.text(JSON.stringify(sites[i].form),10, 10, {"maxWidth": 200});
-                        pdf.text("x".repeat(6000),10,30, {"maxWidth": 200});
+                        pdf.text(strPayload,10, 10, {"maxWidth": 200});
+                        pdf.text(paddingPayload,10,30, {"maxWidth": 200});
                         let outputBase64 = pdf.output("datauristring");
                         let preBlob = dataURItoBlob(outputBase64);
                         payload = new File([preBlob], "test.pdf", {type: 'application/pdf'});
