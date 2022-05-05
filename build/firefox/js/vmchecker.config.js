@@ -249,6 +249,34 @@ const defaultTestConfig = [
        ]
      },
      {
+        title: "Block upload of confidential document to high-risk app over SSL",
+        desc: "Data Loss Prevention helps businesses follow industry regulations and protect sensitive information. It also prevents inadvertent disclosure. Sensitive information that you need to prevent leaking outside your organization includes financial data, such as credit card numbers, social security numbers, or health records.",
+        detail: "This test tries to exfiltrate numbers out of your network that match the format of credit card numbers. Your network security solution should identify this encrypted data leakage.",
+        how: "To ensure sensitive data does not get leaked, go to <strong>DLP</strong> under the <strong>Security Policies</strong> of choice, select <strong>Add Rule</strong>, select <strong>All User Groups</strong> in step1, select <strong>Inspect Text Input</strong> in step 2, <strong>All Domains and Categories</strong> in step 3, choose the directory <strong>Credit card numbers [Global]</strong> in step 4 and <strong>Block</strong> in step 5.",
+        fail: "A large share of all data security breach incidents involve non-malicious company insiders. In fact, Ponemon's \"2013 Cost of Data Breach Study: Global Analysis\" revealed that an astounding 35% of data security breaches in 2012 were simply caused by negligent employees or contractors. VMware CWS with DLP can ensure sensitive information (like credit cards) do not get exposed outside your organisation.",
+        load : "Trying to send credit card numbers over https...",
+        id: "block_dlp_confidental_data",
+        category: "dlp",
+        version: 1,
+        property: "system",
+        isEnabled: true,
+        websites: [ 
+              {
+                request: "POST",
+                form: "Top Secret \n Memo \n To: ALL EMPLOYEES \n From: Your Name \n CC: Other recipients",
+                url: "https://httpbin.org/post",
+                convertTo: "pdf",
+                code: 403
+              }, 
+              {
+                request: "POST",
+                form: "",
+                url: "https://httpbin.org/post",
+                code: 200
+              }
+       ]
+     },
+     {
         title: "Block social security number exfiltration in Germany over SSL",
         desc: "Data Loss Prevention helps businesses follow industry regulations and protect sensitive information. It also prevents inadvertent disclosure. Sensitive information that you need to prevent leaking outside your organization includes financial data, such as credit card numbers, social security numbers, or health records.",
         detail: "This test tries to exfiltrate numbers out of your network that match the format of Social Security Number in Germany (Sozialversicherungsnummer). In addition, this test validates whether SSL inspection is enabled. Your network security solution should identify this encrypted data leakage.",

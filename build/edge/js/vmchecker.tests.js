@@ -82,7 +82,8 @@ function Stats (oarr) {
 async function doAjax(url, obj={type: undefined, request:undefined, payload:undefined}) {
     // Here a very good article explaining why I cannot use performance.time in XHR domain. https://www.dynatrace.com/support/help/how-to-use-dynatrace/real-user-monitoring/basic-concepts/user-actions
     // This one is good as well https://web.dev/ttfb/
-    // Question however is how does Google Chrome do it anyway?
+    // Or this one https://developer.mozilla.org/en-US/docs/Web/API/Resource_Timing_API/Using_the_Resource_Timing_API
+    // Unfortunately I cannot get the ones chrome nor firefox have via API, and getting them via performance.time I get 0 because of cors.
     let ret = [];
     let time;
 
@@ -333,13 +334,18 @@ async function doTesting(sites) {
         const expected_code           = sites[i].code;
         const request                 = sites[i].request || "GET";
         //TODO: Support files in the future and not only user input
-        let payload                 = null;
+        let payload                   = null;
         if (request === "POST") {
-               const convertTo                    = sites[i].convertTo    || "user"; 
+               const convertTo        = sites[i].convertTo    || "user"; 
                let paddingPayload = "";
-               const strPayload = JSON.stringify(sites[i].form);
+               if (typeof sites[i].form === "string") { 
+                    var strPayload = sites[i].form;
+               } else {
+                    var strPayload = JSON.stringify(sites[i].form);
+               }
                if (convertTo === "user") {
-                        paddingPayload = " ".repeat(1024);
+                        // Padding with spaces will not work here as it will get compressed.
+                        paddingPayload = "x".repeat(1024);
                         payload = new FormData();
                         payload.append("text", strPayload);
                         // To trigger VMware DLPs for user-input one needs to have a minimum of 1KB as payload - generating 1KB string and add it to existing content.
@@ -356,7 +362,7 @@ async function doTesting(sites) {
                         let outputBase64 = pdf.output("datauristring");
                         let preBlob = dataURItoBlob(outputBase64);
                         payload = new File([preBlob], "test.pdf", {type: 'application/pdf'});
-                        pdf.save("test.pdf");
+                        //pdf.save("test.pdf");
                }
         }
         const [jqXHR, xhr, rtt, data] = await doAjax(url, {request: request, payload: payload}); 
@@ -386,7 +392,7 @@ async function doTesting(sites) {
 function lookup(id) {
     for (let i = 0; i < testConfig.length; i++) {
         let o = testConfig[i];
-        if (o.id == id) {
+        if (o.id === id) {
             return [o.how, o.fail, o.load, o.websites];            
         }   
     }
@@ -563,6 +569,7 @@ function createTestPage () {
                 let asyncFunc = doTesting(listWebsites);
                 if (typeof asyncFunc === "object") {
                     Promise.resolve(asyncFunc).then(function(returnValues) {
+                        //TODO: Get download blob and create a download link
                         let [isBlocked, data, rtt, url, code, msg] = returnValues[0];
                         if (returnValues.length > 1) {
                             for (let i=1 ; i < returnValues.length; ++i) {
@@ -1014,7 +1021,7 @@ function createOptionsPage() {
     $("#generalControl").append( 
             `
              <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                 <button type="button" class="btn btn-danger" id='restOverallConfiguration'>
+                 <button type="button" class="btn btn-danger" id='resetOverallConfiguration'>
                     <svg class="bi flex-shrink-0" width="16" height="16" role="img" aria-label="Reset"><use xlink:href="#trash-img"/></svg>
                     Reset configuration
                  </button>
@@ -1234,7 +1241,11 @@ function createOptionsPage() {
              if (length-1 > 0){
                 $("#websites").children("div:last").remove();
              }  
-         } else if ($(this).attr('id') == "restOverallConfiguration") {
+         } else if ($(this).attr('id') == "resetOverallConfiguration") {
+            //import {defaultTestConfig, defaultTestingDomains} from './vmchecker.config.js';
+            //delete require.cache[require.resolve('./vmchecker.config.js')]
+            //TODO: Find a way to reload defaultTestConfig and defaultTestDomains for the use-case if one alters the files directly on the filesystems.
+            // Workaround is to reload the whole page before resetOverall
             await clearStorageData();
             await setConfig();
             displayPage("navConfig");
